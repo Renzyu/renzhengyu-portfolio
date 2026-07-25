@@ -1210,7 +1210,7 @@ function AIBrainIntro() {
             <div
               key={phase.phase}
               data-ab-card
-              className="opacity-0 mb-24 sm:mb-28 last:mb-0"
+              className="opacity-0"
             >
               <div
                 className="relative p-8 sm:p-10 md:p-12 rounded-2xl overflow-hidden"
@@ -1269,6 +1269,20 @@ function AIBrainIntro() {
                   }}
                 />
               </div>
+              {i < BUILD_PHASES.length - 1 && (
+                <div className="flex h-28 items-center justify-center" aria-hidden>
+                  <div
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-sm"
+                    style={{
+                      border: "1px solid rgba(215,238,252,0.16)",
+                      color: "rgba(225,244,255,0.62)",
+                      background: "rgba(255,255,255,0.025)",
+                    }}
+                  >
+                    {["○", "◇", "△", "▽", "□"][i]}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -2232,7 +2246,7 @@ function AIAssistantContent() {
         </p>
       </div>
 
-      <div className="w-full max-w-3xl mx-auto space-y-24 md:space-y-28">
+      <div className="w-full max-w-3xl mx-auto">
         {TEAM.map((member, i) => (
           <div key={member.name} data-agent-card className="opacity-0">
             <div className="relative p-7 sm:p-9 rounded-2xl overflow-hidden"
@@ -2257,6 +2271,20 @@ function AIAssistantContent() {
               <div className="relative z-10 mt-3 ml-14 h-px w-6"
                 style={{ background: "linear-gradient(90deg, rgba(160,195,255,0.12), transparent)" }} />
             </div>
+            {i < TEAM.length - 1 && (
+              <div className="flex h-28 items-center justify-center" aria-hidden>
+                <div
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-sm"
+                  style={{
+                    border: "1px solid rgba(215,238,252,0.16)",
+                    color: "rgba(225,244,255,0.62)",
+                    background: "rgba(255,255,255,0.025)",
+                  }}
+                >
+                  {["○", "◇", "△", "□"][i]}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

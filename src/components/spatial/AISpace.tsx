@@ -26,10 +26,10 @@ function EntranceController({ children }: { children: React.ReactNode }) {
   const entranceDone = useRef(false);
   const { gl } = useThree();
 
-  // Track rendered frames + signal ready after 5 frames
+  // Start on the first rendered frame so the rush is immediate.
   useFrame(() => {
     frameCount.current++;
-    if (frameCount.current === 5) {
+    if (frameCount.current === 1) {
       markSceneReady();
     }
   });
@@ -42,7 +42,7 @@ function EntranceController({ children }: { children: React.ReactNode }) {
     const el = groupRef.current;
     gsap.to(el.position, {
       z: 0,
-      duration: 0.72,
+      duration: 0.46,
       ease: "power4.out",
       overwrite: "auto",
     });
@@ -50,14 +50,14 @@ function EntranceController({ children }: { children: React.ReactNode }) {
       x: 1,
       y: 1,
       z: 1,
-      duration: 0.72,
+      duration: 0.46,
       ease: "power4.out",
       overwrite: "auto",
     });
     gsap.to(el.rotation, {
       x: 0,
       y: 0,
-      duration: 0.68,
+      duration: 0.44,
       ease: "power4.out",
       overwrite: "auto",
     });
@@ -90,7 +90,7 @@ export default function AISpace({ scrollProgress = 0, hoveredChapter = null, sta
         <DynamicLight />
         <EntranceController>
           <HeroObject scrollProgress={scrollProgress} hoveredChapter={hoveredChapter} stageProgress={stageProgress} />
-          <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} />
+          <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} mobileHero={mobileHero} />
         </EntranceController>
         {!mobileHero && (
           <>

@@ -6,7 +6,7 @@ import { Text3D } from "@react-three/drei";
 import { assetPath } from "@/lib/asset-path";
 import * as THREE from "three";
 
-export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { scrollProgress?: number; stageProgress?: number }) {
+export default function HeroText3D({ scrollProgress = 0, stageProgress = 0, mobileHero = false }: { scrollProgress?: number; stageProgress?: number; mobileHero?: boolean }) {
   const scaleRef = useRef<THREE.Group>(null);
   const swayRef = useRef<THREE.Group>(null);
   const innerMatRef = useRef<THREE.MeshPhysicalMaterial>(null);
@@ -86,7 +86,7 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { 
   });
 
   return (
-    <group position={[0, 0.15, 0.35]}>
+    <group position={[mobileHero ? -0.43 : 0, 0.15, 0.35]}>
       <group ref={scaleRef}>
         <group ref={swayRef}>
           <Text3D font={assetPath("/fonts/helvetiker_bold.typeface.json")} size={0.22} height={0.1} bevelEnabled bevelThickness={0.04} bevelSize={0.015} bevelSegments={6} curveSegments={20}>

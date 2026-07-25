@@ -171,9 +171,10 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         fontSize: Math.max(28, Math.min(72, rect.height * 0.48)),
       });
 
-      gsap.timeline({ onComplete: () => router.push("/ai-lab") })
+      gsap.timeline()
         .to(overlay, { opacity: 0.97, duration: 0.2, ease: "power2.out" }, 0)
         .to(clone, { opacity: 0.85, scale: 1.08, duration: 0.28, ease: "power3.out" }, 0.02);
+      globalThis.setTimeout(() => router.push("/ai-lab"), 70);
     },
     [router, saveScrollY],
   );
