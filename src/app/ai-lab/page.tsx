@@ -1210,7 +1210,7 @@ function AIBrainIntro() {
             <div
               key={phase.phase}
               data-ab-card
-              className="opacity-0 mb-12 sm:mb-16 last:mb-0"
+              className="opacity-0 mb-24 sm:mb-28 last:mb-0"
             >
               <div
                 className="relative p-8 sm:p-10 md:p-12 rounded-2xl overflow-hidden"
@@ -1715,18 +1715,6 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
         <section className="relative h-[100lvh] min-h-[680px] overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <AISpace scrollProgress={0} hoveredChapter={null} stageProgress={0} mobileHero />
-          </div>
-
-          <div
-            className="ai-os-rush-title absolute inset-x-0 top-1/2 z-10 select-none text-center text-[clamp(4.8rem,25vw,7rem)] font-semibold leading-none tracking-[-0.08em]"
-            style={{
-              color: "rgba(220,240,255,0.22)",
-              WebkitTextStroke: "1px rgba(235,248,255,0.36)",
-              textShadow: "0 0 18px rgba(220,240,255,0.45), 0 0 48px rgba(121,184,235,0.28)",
-              mixBlendMode: "screen",
-            }}
-          >
-            AI-OS
           </div>
 
           <div className="absolute inset-x-6 bottom-10 z-20 text-center">
@@ -2244,7 +2232,7 @@ function AIAssistantContent() {
         </p>
       </div>
 
-      <div className="w-full max-w-3xl mx-auto space-y-8 md:space-y-10">
+      <div className="w-full max-w-3xl mx-auto space-y-24 md:space-y-28">
         {TEAM.map((member, i) => (
           <div key={member.name} data-agent-card className="opacity-0">
             <div className="relative p-7 sm:p-9 rounded-2xl overflow-hidden"
@@ -2278,18 +2266,27 @@ function AIAssistantContent() {
 
 export default function AILabPage() {
   const [view, setView] = useState<"hub" | "brain" | "workflow" | "agents" | "toolchain">("hub");
+  const [portalTransition, setPortalTransition] = useState(false);
+  const transitionTimers = useRef<number[]>([]);
 
-  const enterPortal = (id: string) => {
-    window.scrollTo(0, 0);
-    setView(id as typeof view);
-    requestAnimationFrame(() => window.scrollTo(0, 0));
-  };
+  useEffect(() => () => {
+    transitionTimers.current.forEach(window.clearTimeout);
+  }, []);
 
-  const backToHub = () => {
-    window.scrollTo(0, 0);
-    setView("hub");
-    requestAnimationFrame(() => window.scrollTo(0, 0));
-  };
+  const switchView = useCallback((next: typeof view) => {
+    if (portalTransition || next === view) return;
+    setPortalTransition(true);
+    transitionTimers.current.push(window.setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      setView(next);
+    }, 145));
+    transitionTimers.current.push(window.setTimeout(() => {
+      setPortalTransition(false);
+    }, 380));
+  }, [portalTransition, view]);
+
+  const enterPortal = (id: string) => switchView(id as typeof view);
+  const backToHub = () => switchView("hub");
 
   return (
     <>
@@ -2297,6 +2294,12 @@ export default function AILabPage() {
         <HubView onEnterPortal={enterPortal} />
       ) : (
         <PortalView portalId={view} onBack={backToHub} />
+      )}
+      {portalTransition && (
+        <div
+          aria-hidden
+          className="portal-space-transition fixed inset-0 z-[9997] pointer-events-none"
+        />
       )}
     </>
   );

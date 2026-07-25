@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text3D } from "@react-three/drei";
 import { assetPath } from "@/lib/asset-path";
@@ -13,15 +13,6 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { 
   const mouse = useRef({ x: 0.5, y: 0.5 });
   const hoverIntensity = useRef(0);
   const floatPhase = useRef(Math.random() * Math.PI * 2);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
   const prefersReduced = useRef(false);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -58,8 +49,8 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { 
 
     // ±3° subtle horizontal sway — barely perceptible, NOT continuous rotation
     if (swayRef.current) {
-      const swayRange = isMobile ? THREE.MathUtils.degToRad(2) : THREE.MathUtils.degToRad(3);
-      const swaySpeed = rm ? 0 : 0.08;
+      const swayRange = THREE.MathUtils.degToRad(15);
+      const swaySpeed = rm ? 0 : 0.2;
       const sway = Math.sin(t * swaySpeed + floatPhase.current) * swayRange;
       const hoverReduce = 1 - hoverIntensity.current * 0.5;
       swayRef.current.rotation.y = sway * hoverReduce;

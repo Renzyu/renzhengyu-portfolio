@@ -65,6 +65,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const prevPathRef = useRef(pathname);
   const sceneReadyRef = useRef(false);
   const sceneReadyFn = useRef<() => void>(() => {});
+  const sourceRef = useRef<TransitionSource>(null);
 
   const markSceneReady = useCallback(() => {
     sceneReadyRef.current = true;
@@ -95,9 +96,9 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     });
 
     if (source !== "direct-entry" && clone) {
-      tl.to(clone, { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 0);
+      tl.to(clone, { opacity: 0, scale: 1.12, duration: 0.28, ease: "power2.out" }, 0);
     }
-    tl.to(overlay, { opacity: 0, duration: 0.55, ease: "power2.inOut" }, 0);
+    tl.to(overlay, { opacity: 0, duration: 0.32, ease: "power2.out" }, 0);
   }, []);
 
   /* ── Detect route arrival ── */
@@ -107,7 +108,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
     if (activeRef.current && prev !== pathname) {
       activeRef.current = false;
-      const src = transitionSource;
+      const src = sourceRef.current;
       markSceneReady();
       requestAnimationFrame(() => runEntrance(src));
       return;
@@ -140,17 +141,73 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
   /* ── Forward transition (home → /ai-lab) ── */
   const startAiOsTransition = useCallback(
     (el: HTMLElement, sourceType: TransitionSource) => {
-      void el;
-      void sourceType;
+      if (activeRef.current) return;
+      activeRef.current = true;
+      navigationStartedRef.current = true;
+      sourceRef.current = sourceType;
+      setTransitionSource(sourceType);
+      setIsTransitioning(true);
+      setSceneReadyState(false);
+      sceneReadyRef.current = false;
       saveScrollY();
-      router.push("/ai-lab");
+
+      const overlay = overlayRef.current;
+      const clone = cloneRef.current;
+      if (!overlay || !clone) {
+        router.push("/ai-lab");
+        return;
+      }
+
+      const rect = el.getBoundingClientRect();
+      gsap.killTweensOf([overlay, clone]);
+      gsap.set(overlay, { opacity: 0 });
+      gsap.set(clone, {
+        opacity: 0,
+        left: rect.left + rect.width / 2,
+        top: rect.top + rect.height / 2,
+        xPercent: -50,
+        yPercent: -50,
+        scale: 0.72,
+        fontSize: Math.max(28, Math.min(72, rect.height * 0.48)),
+      });
+
+      gsap.timeline({ onComplete: () => router.push("/ai-lab") })
+        .to(overlay, { opacity: 0.97, duration: 0.2, ease: "power2.out" }, 0)
+        .to(clone, { opacity: 0.85, scale: 1.08, duration: 0.28, ease: "power3.out" }, 0.02);
     },
     [router, saveScrollY],
   );
 
   /* ── Reverse transition (/ai-lab → home) ── */
   const goBackWithTransition = useCallback(() => {
-    router.back();
+    if (activeRef.current) return;
+    activeRef.current = true;
+    navigationStartedRef.current = true;
+    sourceRef.current = "top-nav";
+    setTransitionSource("top-nav");
+    setIsTransitioning(true);
+
+    const overlay = overlayRef.current;
+    const clone = cloneRef.current;
+    if (!overlay || !clone) {
+      router.back();
+      return;
+    }
+
+    gsap.killTweensOf([overlay, clone]);
+    gsap.set(overlay, { opacity: 0 });
+    gsap.set(clone, {
+      opacity: 0,
+      left: "50%",
+      top: "50%",
+      xPercent: -50,
+      yPercent: -50,
+      scale: 1.04,
+      fontSize: 56,
+    });
+    gsap.timeline({ onComplete: () => router.back() })
+      .to(overlay, { opacity: 0.97, duration: 0.2, ease: "power2.out" }, 0)
+      .to(clone, { opacity: 0.72, scale: 0.88, duration: 0.24, ease: "power2.inOut" }, 0);
   }, [router]);
 
   return (
@@ -175,7 +232,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         className="fixed inset-0 z-[9999] pointer-events-none"
         style={{
           opacity: 0,
-          background: "#0a1520",
+          background: "radial-gradient(circle at 50% 50%, #5d829a 0%, #19384e 48%, #07131e 100%)",
           willChange: "opacity",
           transform: "translateZ(0)",
           backfaceVisibility: "hidden",
@@ -185,7 +242,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       {/* Shared element clone */}
       <div
         ref={cloneRef}
-        className="fixed z-[9998] pointer-events-none select-none flex items-center justify-center text-white font-light tracking-[0.04em]"
+        className="fixed z-[10000] pointer-events-none select-none flex items-center justify-center text-white font-light tracking-[0.04em]"
         style={{
           opacity: 0, left: 0, top: 0, transform: "none",
           willChange: "transform, width, font-size, opacity",

@@ -131,6 +131,29 @@ body {
   will-change: transform, opacity, filter;
 }
 
+@keyframes portalSpaceTransition {
+  0% {
+    opacity: 0;
+    transform: translateZ(0) scale(0.985);
+  }
+  42%, 58% {
+    opacity: 1;
+    transform: translateZ(0) scale(1.015);
+  }
+  100% {
+    opacity: 0;
+    transform: translateZ(0) scale(1.04);
+  }
+}
+
+.portal-space-transition {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(175, 218, 244, 0.72), rgba(45, 91, 120, 0.96) 48%, #0a1c2a 100%);
+  animation: portalSpaceTransition 380ms cubic-bezier(0.22, 0.75, 0.25, 1) both;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
 /* Section number styling */
 .section-number {
   display: flex;

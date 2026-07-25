@@ -48,8 +48,8 @@ export default function HeroObject({ scrollProgress = 0, stageProgress = 0, hove
     // Stage rotation.y (180° spin)
     stageRotY.current += (stageProgress * Math.PI - stageRotY.current) * Math.min(1, delta * 4);
 
-    // Idle auto-rotation (continuous slow spin)
-    idleRotY.current += delta * 0.03;
+    // Slow pendulum motion: readable at all times, never a continuous spin.
+    idleRotY.current = Math.sin(t * 0.2) * THREE.MathUtils.degToRad(15);
 
     // Scale: only changes 0.08→0.30, then freezes at 0.82
     const scaleClamp = Math.max(0, Math.min(1, (sp - 0.08) / 0.22));

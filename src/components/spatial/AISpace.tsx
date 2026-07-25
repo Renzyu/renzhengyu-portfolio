@@ -90,7 +90,7 @@ export default function AISpace({ scrollProgress = 0, hoveredChapter = null, sta
         <DynamicLight />
         <EntranceController>
           <HeroObject scrollProgress={scrollProgress} hoveredChapter={hoveredChapter} stageProgress={stageProgress} />
-          {!mobileHero && <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} />}
+          <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} />
         </EntranceController>
         {!mobileHero && (
           <>
