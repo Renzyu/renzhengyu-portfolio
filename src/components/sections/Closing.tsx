@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { assetPath } from "@/lib/asset-path";
 
 export default function Closing() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -62,7 +63,7 @@ export default function Closing() {
     <section
       ref={sectionRef}
       id="closing"
-      className="h-screen relative flex items-center justify-center overflow-hidden select-none"
+      className="min-h-screen relative flex items-center justify-center overflow-hidden select-none py-16 md:py-24"
       
     >
       {/* Very subtle ambient glow */}
@@ -152,6 +153,41 @@ export default function Closing() {
             <a href="mailto:705618783@qq.com" className="transition-colors duration-300 hover:text-white">
               705618783@qq.com
             </a>
+          </div>
+          <div className="mt-5 flex flex-col items-center">
+            <p className="text-sm md:text-base tracking-[0.16em]" style={{ color: "rgba(225,230,242,0.72)" }}>
+              我的微信号
+            </p>
+            <span className="mt-2 text-xl leading-none animate-breathe" style={{ color: "rgba(190,160,235,0.78)" }} aria-hidden>
+              ↓
+            </span>
+            <div
+              className="relative mt-4 rounded-[28px] p-3 md:p-4"
+              style={{
+                background: "linear-gradient(145deg, rgba(255,255,255,0.13), rgba(176,126,226,0.055))",
+                border: "1px solid rgba(221,194,255,0.35)",
+                boxShadow: "0 0 22px rgba(177,103,224,0.18), 0 0 64px rgba(97,141,238,0.12), inset 0 1px 0 rgba(255,255,255,0.28)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+              }}
+            >
+              <div
+                className="pointer-events-none absolute -inset-3 -z-10 rounded-[34px]"
+                style={{
+                  background: "linear-gradient(135deg, rgba(205,105,194,0.16), rgba(116,134,246,0.14))",
+                  filter: "blur(18px)",
+                }}
+              />
+              <img
+                src={assetPath("/images/contact/wechat-qr.jpg")}
+                alt="任政宇的微信二维码"
+                width={709}
+                height={707}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-[min(72vw,320px)] rounded-[18px] md:w-[360px]"
+              />
+            </div>
           </div>
         </div>
       </div>
