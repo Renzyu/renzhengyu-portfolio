@@ -4,6 +4,6 @@ await mkdir("dist/.openai", { recursive: true });
 await copyFile(".openai/hosting.json", "dist/.openai/hosting.json");
 await writeFile(
   "dist/server/index.js",
-  'export { default } from "./index.mjs";\n',
+  'import handler from "./index.mjs";\nexport default handler;\n',
   "utf8",
 );
