@@ -108,19 +108,17 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     if (activeRef.current && prev !== pathname) {
       activeRef.current = false;
       const src = transitionSource;
-      const safetyTimeout = setTimeout(() => markSceneReady(), 2200);
-      sceneReadyFn.current = () => { clearTimeout(safetyTimeout); runEntrance(src); };
-      if (sceneReadyRef.current) { clearTimeout(safetyTimeout); runEntrance(src); }
-      return () => clearTimeout(safetyTimeout);
+      markSceneReady();
+      requestAnimationFrame(() => runEntrance(src));
+      return;
     }
 
     if (!activeRef.current && pathname === "/ai-lab") {
       setTransitionSource("direct-entry");
-      if (overlayRef.current) gsap.set(overlayRef.current, { opacity: 0.6 });
-      const timeout = setTimeout(() => markSceneReady(), 2200);
-      sceneReadyFn.current = () => { clearTimeout(timeout); runEntrance("direct-entry"); };
-      if (sceneReadyRef.current) { clearTimeout(timeout); runEntrance("direct-entry"); }
-      return () => clearTimeout(timeout);
+      if (overlayRef.current) gsap.set(overlayRef.current, { opacity: 0 });
+      markSceneReady();
+      runEntrance("direct-entry");
+      return;
     }
   }, [pathname]);
 

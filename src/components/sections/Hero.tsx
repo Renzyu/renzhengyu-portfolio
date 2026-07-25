@@ -14,7 +14,7 @@ export default function Hero() {
   const mouseGlowRef = useRef<HTMLDivElement>(null);
   const nameCnRef = useRef<HTMLParagraphElement>(null);
   const nameEnRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLDivElement>(null);
 
@@ -257,13 +257,21 @@ export default function Hero() {
         >
           REN ZHENGYU
         </h1>
-        <p
+        <div
           ref={subtitleRef}
-          className="text-lg md:text-xl opacity-0 mt-1 font-light"
+          className="opacity-0 mt-1 font-light"
           style={{ fontFamily: "var(--font-inter)", color: "var(--color-text-secondary)", willChange: "opacity" }}
         >
-          Visual Creator
-        </p>
+          <p className="text-lg md:text-xl">Visual Creator</p>
+          <div className="mt-3 flex flex-col gap-1 text-[11px] md:text-xs tracking-[0.08em] text-white/45">
+            <p>期待与您合作。</p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <a href="tel:18695233332" className="hover:text-white/70 transition-colors">186 9523 3332</a>
+              <span className="hidden sm:inline text-white/20">/</span>
+              <a href="mailto:705618783@qq.com" className="hover:text-white/70 transition-colors">705618783@qq.com</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Scroll hint */}

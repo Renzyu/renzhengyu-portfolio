@@ -1541,8 +1541,7 @@ const CHAPTER_NODES = [
   },
 ];
 
-function SpaceProjectNodes({ scrollProgress, stageProgress, hoveredChapter, onHover }: { scrollProgress: number; stageProgress: number; hoveredChapter: string | null; onHover: (id: string | null) => void }) {
-  const router = useRouter();
+function SpaceProjectNodes({ scrollProgress, stageProgress, hoveredChapter, onHover, onEnterPortal }: { scrollProgress: number; stageProgress: number; hoveredChapter: string | null; onHover: (id: string | null) => void; onEnterPortal: (id: string) => void }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -1583,7 +1582,15 @@ function SpaceProjectNodes({ scrollProgress, stageProgress, hoveredChapter, onHo
         return (
           <div
             key={node.id}
-            onClick={() => router.push(node.route)}
+            onClick={() => {
+              const portalByChapter: Record<string, string> = {
+                "understanding-ai-agents": "agents",
+                "ai-brain": "brain",
+                "built-with-ai": "workflow",
+                "future-of-agents": "toolchain",
+              };
+              onEnterPortal(portalByChapter[node.id]);
+            }}
             onMouseEnter={(e) => { onHover(node.id); }}
             onMouseLeave={(e) => { onHover(null); }}
             onMouseMove={(e) => {
@@ -1766,7 +1773,7 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
               key={node.id}
               type="button"
               onClick={() => onEnterPortal(portalByChapter[node.id])}
-              className="w-full rounded-[22px] p-5 text-left"
+              className="group relative flex w-full flex-col items-stretch overflow-hidden rounded-[22px] p-5 text-left transition-transform duration-200 active:scale-[0.985]"
               style={{
                 minHeight: 148,
                 color: "rgba(245,251,255,0.94)",
@@ -1787,8 +1794,13 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
               <span className="mt-2 block text-xs font-light leading-relaxed" style={{ color: "rgba(225,241,250,0.62)" }}>
                 {node.desc}
               </span>
-              <span className="mt-4 block text-[9px] tracking-[0.18em]" style={{ color: "rgba(225,242,255,0.55)" }}>
-                ENTER →
+              <span className="mt-5 flex items-center justify-between border-t border-white/15 pt-4">
+                <span className="text-[10px] tracking-[0.16em]" style={{ color: "rgba(239,249,255,0.82)" }}>
+                  点击进入 · VIEW PROJECT
+                </span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-white/10 text-base text-white/90">
+                  →
+                </span>
               </span>
             </button>
           ))}
@@ -1998,7 +2010,7 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
 
         {/* ── 4 Project Nodes (hidden until first scroll to prevent FOUC) ── */}
         <div style={{ opacity: projectsReady ? 1 : 0, visibility: projectsReady ? "visible" : "hidden", transition: "none" }}>
-          <SpaceProjectNodes scrollProgress={scrollProgress} stageProgress={stageProgress} hoveredChapter={hoveredChapter} onHover={setHoveredChapter} />
+          <SpaceProjectNodes scrollProgress={scrollProgress} stageProgress={stageProgress} hoveredChapter={hoveredChapter} onHover={setHoveredChapter} onEnterPortal={onEnterPortal} />
         </div>
       </div>
 
