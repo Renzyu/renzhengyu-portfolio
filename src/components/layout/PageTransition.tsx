@@ -61,6 +61,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const [savedScrollY, setSavedScrollY] = useState(0);
 
   const activeRef = useRef(false);
+  const navigationStartedRef = useRef(false);
   const prevPathRef = useRef(pathname);
   const sceneReadyRef = useRef(false);
   const sceneReadyFn = useRef<() => void>(() => {});
@@ -123,13 +124,27 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     }
   }, [pathname]);
 
-  useEffect(() => { router.prefetch("/ai-lab"); }, [router]);
+  useEffect(() => {
+    // Warm the heavy AI-OS route as soon as the browser has breathing room.
+    // This keeps its bundle parsing away from the transition's critical frames.
+    const warmRoute = () => router.prefetch("/ai-lab");
+    warmRoute();
+
+    if (typeof window.requestIdleCallback === "function") {
+      const idleId = window.requestIdleCallback(warmRoute, { timeout: 1200 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = globalThis.setTimeout(warmRoute, 250);
+    return () => globalThis.clearTimeout(timeoutId);
+  }, [router]);
 
   /* ── Forward transition (home → /ai-lab) ── */
   const startAiOsTransition = useCallback(
     (el: HTMLElement, sourceType: TransitionSource) => {
       if (activeRef.current) return;
       activeRef.current = true;
+      navigationStartedRef.current = false;
       sceneReadyRef.current = false;
       setSceneReadyState(false);
       setIsTransitioning(true);
@@ -151,12 +166,23 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         color: window.getComputedStyle(el).color,
       });
 
-      gsap.timeline({ onComplete: () => router.push("/ai-lab") })
+      const navigate = () => {
+        if (navigationStartedRef.current) return;
+        navigationStartedRef.current = true;
+        router.push("/ai-lab");
+      };
+
+      gsap.timeline()
         .to(clone, {
           x: vw / 2 - 120, y: vh / 2 - 20, width: 240, height: 40,
           fontSize: "clamp(28px,5vw,42px)", duration: 0.5, ease: "power3.inOut",
         }, 0)
-        .to(overlay, { opacity: 0.6, duration: 0.35, ease: "power2.inOut" }, 0);
+        .to(overlay, {
+          opacity: 1,
+          duration: 0.28,
+          ease: "power2.inOut",
+          onComplete: navigate,
+        }, 0);
     },
     [router, saveScrollY],
   );
@@ -221,7 +247,17 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       {children}
 
       {/* Black overlay */}
-      <div ref={overlayRef} className="fixed inset-0 z-[9999] pointer-events-none" style={{ opacity: 0, background: "#0a1520" }} />
+      <div
+        ref={overlayRef}
+        className="fixed inset-0 z-[9999] pointer-events-none"
+        style={{
+          opacity: 0,
+          background: "#0a1520",
+          willChange: "opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden",
+        }}
+      />
 
       {/* Shared element clone */}
       <div
