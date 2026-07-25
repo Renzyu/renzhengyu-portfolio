@@ -170,16 +170,19 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         router.push("/ai-lab");
       };
 
+      // Start route resolution on the click frame. The shared-element motion
+      // now masks loading instead of delaying navigation until it finishes.
+      navigate();
+
       gsap.timeline()
         .to(clone, {
           x: vw / 2 - 120, y: vh / 2 - 20, width: 240, height: 40,
-          fontSize: "clamp(28px,5vw,42px)", duration: 0.5, ease: "power3.inOut",
+          fontSize: "clamp(28px,5vw,42px)", duration: 0.24, ease: "power3.inOut",
         }, 0)
         .to(overlay, {
           opacity: 1,
-          duration: 0.28,
+          duration: 0.14,
           ease: "power2.inOut",
-          onComplete: navigate,
         }, 0);
     },
     [router, saveScrollY],

@@ -572,22 +572,20 @@ function AgentNode({
             {agent.label}
           </h3>
 
-          {/* Description — always visible */}
-          <p
-            className="relative z-10 text-xs sm:text-sm font-light leading-relaxed mt-2 max-w-sm"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            {agent.description}
-          </p>
-
-          {/* Expanded capabilities */}
+          {/* Details rise above adjacent nodes only while this node is active */}
           <div
             className="relative z-10 overflow-hidden transition-all duration-500"
             style={{
-              maxHeight: expanded ? "180px" : "0",
+              maxHeight: expanded ? "420px" : "0",
               opacity: expanded ? 1 : 0,
             }}
           >
+            <p
+              className="mt-2 max-w-sm text-xs sm:text-sm font-light leading-relaxed"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              {agent.description}
+            </p>
             <div
               className="mt-3 pt-3"
               style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
@@ -644,37 +642,13 @@ function BrainVisualization() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Parallax on center
-  const mousePos = useRef({ x: 0.5, y: 0.5 });
-  const rafRef = useRef(0);
-  useEffect(() => {
-    const onMouse = (e: MouseEvent) => {
-      mousePos.current = { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight };
-    };
-    window.addEventListener("mousemove", onMouse, { passive: true });
-    const animate = () => {
-      const { x: mx, y: my } = mousePos.current;
-      const px = (mx - 0.5) * 10;
-      const py = (my - 0.5) * 10;
-      if (centerRef.current) {
-        centerRef.current.style.transform = `translate3d(${px * 0.4}px, ${py * 0.4}px, 0)`;
-      }
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => {
-      window.removeEventListener("mousemove", onMouse);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
   // ── Radial layout parameters ──
   const N = AGENT_NODES.length; // 10
   // Angles: start from top (-90°), evenly spaced
   const angles = AGENT_NODES.map((_, i) => (i / N) * 360 - 90);
 
   // Radius as percentage of canvas size
-  const RADIUS_PCT = 34;
+  const RADIUS_PCT = 39;
 
   return (
     <section className="relative z-10 min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
@@ -705,8 +679,8 @@ function BrainVisualization() {
         ref={canvasRef}
         className="relative w-full flex-1 flex items-center justify-center"
         style={{
-          maxWidth: isMobile ? "100%" : "900px",
-          maxHeight: isMobile ? "none" : "70vh",
+          maxWidth: isMobile ? "100%" : "1280px",
+          maxHeight: isMobile ? "none" : "82vh",
           aspectRatio: isMobile ? "auto" : "1 / 1",
           transformOrigin: "center center",
         }}
@@ -834,17 +808,25 @@ function BrainVisualization() {
               // Slightly offset each node so its center aligns with the line endpoint
               const offsetX = -50; // half of node width percentage
               const offsetY = -50; // half of node height percentage
+              const activeOffsetY =
+                hoveredId === agent.id && top > 62
+                  ? -88
+                  : hoveredId === agent.id && top < 38
+                    ? -12
+                    : offsetY;
 
               return (
                 <div
                   key={agent.id}
                   data-agent-id={agent.id}
-                  className="absolute z-10"
+                  className="absolute"
                   style={{
                     left: `${left}%`,
                     top: `${top}%`,
-                    transform: `translate(${offsetX}%, ${offsetY}%)`,
-                    width: "clamp(160px, 16vw, 220px)",
+                    transform: `translate(${offsetX}%, ${activeOffsetY}%)`,
+                    width: "clamp(170px, 15vw, 230px)",
+                    zIndex: hoveredId === agent.id ? 60 : 10,
+                    transition: "transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1)",
                   }}
                 >
                   <AgentNode
@@ -2170,12 +2152,21 @@ function NeuralParticleField({ mouseRef }: { mouseRef: React.RefObject<{ x: numb
 /* ── Portal Content View ── */
 function PortalView({ portalId, onBack }: { portalId: string; onBack: () => void }) {
   return (
-    <div className="relative min-h-screen">
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 12%, rgba(202,229,243,0.30) 0%, rgba(119,169,198,0.16) 34%, transparent 62%), linear-gradient(180deg, #789fb7 0%, #365c74 42%, #10283a 72%, #07131e 100%)",
+      }}
+    >
+      <div className="fixed inset-0 pointer-events-none opacity-50"
+        style={{ background: "radial-gradient(circle at 50% 45%, rgba(220,242,255,0.12), transparent 48%)" }}
+      />
       {/* Back button */}
       <button
         onClick={onBack}
         className="group fixed top-6 left-4 md:top-8 md:left-8 z-30 flex items-center gap-2 text-sm md:text-base tracking-[0.08em] font-light transition-all duration-300 cursor-pointer py-2.5 px-3.5"
-        style={{ color: "var(--color-text-muted)", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.04)", borderRadius: "8px" }}
+        style={{ color: "rgba(235,247,255,0.75)", background: "rgba(19,48,66,0.28)", backdropFilter: "blur(12px)", border: "1px solid rgba(240,250,255,0.18)", borderRadius: "999px" }}
       >
         <span className="transition-transform duration-300 group-hover:-translate-x-0.5">←</span>
         <span>实验室</span>
@@ -2295,19 +2286,15 @@ export default function AILabPage() {
   const [transitionActive, setTransitionActive] = useState(false);
 
   const enterPortal = (id: string) => {
+    setView(id as typeof view);
     setTransitionActive(true);
-    setTimeout(() => {
-      setView(id as typeof view);
-      setTransitionActive(false);
-    }, 1000);
+    setTimeout(() => setTransitionActive(false), 260);
   };
 
   const backToHub = () => {
+    setView("hub");
     setTransitionActive(true);
-    setTimeout(() => {
-      setView("hub");
-      setTransitionActive(false);
-    }, 800);
+    setTimeout(() => setTransitionActive(false), 260);
   };
 
   return (

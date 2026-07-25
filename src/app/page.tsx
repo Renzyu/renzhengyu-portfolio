@@ -257,9 +257,11 @@ export default function Home() {
           <p className="lab-item mt-6 text-sm md:text-base font-light text-gray-500 max-w-md mx-auto">
             A cinematic laboratory where human vision meets machine intelligence.
           </p>
-          <div className="lab-item mx-auto mt-8 flex w-fit items-center gap-4 rounded-full border border-white/20 bg-white/[0.06] px-6 py-3 text-xs tracking-[0.16em] text-white/80 backdrop-blur-md transition-all duration-500 group-hover:border-white/40 group-hover:bg-white/[0.1]">
-            <span>进入 AI-OS</span>
-            <span aria-hidden="true" className="text-base transition-transform duration-500 group-hover:translate-x-1">→</span>
+          <div className="lab-item mt-8 flex w-full justify-center">
+            <span className="inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/[0.06] px-6 py-3 text-xs tracking-[0.16em] text-white/80 backdrop-blur-md transition-all duration-500 group-hover:border-white/40 group-hover:bg-white/[0.1]">
+              <span>进入 AI-OS</span>
+              <span aria-hidden="true" className="text-base transition-transform duration-500 group-hover:translate-x-1">→</span>
+            </span>
           </div>
         </div>
       </section>

@@ -40,10 +40,10 @@ export default function Closing() {
         );
       }
 
-      // Email
-      const email = sectionRef.current?.querySelector<HTMLElement>(".cc-email");
-      if (email) {
-        gsap.fromTo(email,
+      // Collaboration and contact details
+      const contact = sectionRef.current?.querySelector<HTMLElement>(".cc-contact");
+      if (contact) {
+        gsap.fromTo(contact,
           { opacity: 0, y: 12 },
           { opacity: 1, y: 0, duration: 0.6, delay: 0.9, ease: "power2.out",
             scrollTrigger: { trigger: sectionRef.current, start: "top 70%", once: true }
@@ -140,15 +140,19 @@ export default function Closing() {
         {/* Divider — thin line */}
         <div className="cc-sub mx-auto my-6 md:my-8 w-6 h-px" style={{ background: "#444" }} />
 
-        {/* Contact email */}
-        <div className="cc-email">
-          <a
-            href="mailto:hi@renzhengyu.com"
-            className="relative inline-block text-xs md:text-sm tracking-[0.08em] font-light transition-all duration-300 hover:opacity-60 group"
-            style={{ color: "#777", fontFamily: "var(--font-inter)" }}
-          >
-            hi@renzhengyu.com
-          </a>
+        {/* Collaboration and direct contact */}
+        <div className="cc-contact flex flex-col items-center gap-3 font-light" style={{ fontFamily: "var(--font-inter)" }}>
+          <p className="text-sm md:text-base tracking-[0.12em]" style={{ color: "#999" }}>
+            期待与您合作。
+          </p>
+          <div className="flex flex-col items-center gap-1.5 text-xs md:text-sm tracking-[0.08em]" style={{ color: "#777" }}>
+            <a href="tel:18695233332" className="transition-colors duration-300 hover:text-white">
+              186 9523 3332
+            </a>
+            <a href="mailto:705618783@qq.com" className="transition-colors duration-300 hover:text-white">
+              705618783@qq.com
+            </a>
+          </div>
         </div>
       </div>
     </section>
