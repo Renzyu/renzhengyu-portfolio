@@ -90,7 +90,7 @@ export default function SelectedWorksSection() {
         {/* Title screen for narrative section */}
         <div
           ref={narrativeTitleRef}
-          className="h-screen flex flex-col items-center justify-center relative overflow-hidden select-none"
+          className="h-[54vw] md:h-screen flex flex-col items-center justify-center relative overflow-hidden select-none"
         >
           {/* Ambient light */}
           <div className="absolute inset-0 pointer-events-none"
@@ -168,7 +168,7 @@ export default function SelectedWorksSection() {
             return (
               <div
                 key={project.id}
-                className="nc-card relative h-screen w-full overflow-hidden select-none"
+                className="nc-card relative h-[56.25vw] md:h-screen w-full overflow-hidden select-none"
                 style={{ background: "#000" }}
               >
                 <NarrativeSlide

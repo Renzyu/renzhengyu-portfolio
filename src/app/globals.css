@@ -70,8 +70,8 @@ body {
     background-attachment: scroll;
   }
   .section-fullscreen {
-    min-height: 100lvh;
-    height: 100lvh;
+    min-height: 0;
+    height: 56.25vw;
   }
   .hero-fullscreen {
     min-height: 100dvh;

@@ -54,7 +54,7 @@ export default function SelectedWorksTitle() {
   return (
     <section
       ref={sectionRef}
-      className="h-screen relative overflow-hidden select-none"
+      className="h-[54vw] md:h-screen relative overflow-hidden select-none"
       style={{ background: "#000" }}
     >
       {/* Ambient light — very subtle center glow */}
@@ -65,7 +65,7 @@ export default function SelectedWorksTitle() {
       {/* Chapter number — top-right in mono */}
       <div
         ref={numberRef}
-        className="absolute top-10 right-10 md:top-14 md:right-16 z-10"
+        className="absolute top-4 right-4 md:top-14 md:right-16 z-10"
       >
         <span
           className="text-sm tracking-[0.15em] font-mono"
@@ -123,7 +123,7 @@ export default function SelectedWorksTitle() {
 
         {/* Chinese subtitle */}
         <p
-          className="ic-sub mt-8 md:mt-10 text-2xl md:text-4xl tracking-[0.25em] font-light"
+          className="ic-sub mt-3 md:mt-10 text-base md:text-4xl tracking-[0.25em] font-light"
           style={{ color: "#555", fontFamily: "var(--font-inter)" }}
         >
           精选作品

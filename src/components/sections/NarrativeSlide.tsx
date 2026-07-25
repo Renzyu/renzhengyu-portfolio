@@ -78,7 +78,7 @@ export default function NarrativeSlide({
   return (
     <div
       ref={sectionRef}
-      className="relative h-[100lvh] min-h-[100lvh]"
+      className="relative h-full"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onTouchStart={handleTouchStart}
@@ -152,8 +152,8 @@ export default function NarrativeSlide({
       )}
 
       {/* Chapter number — top right */}
-      <div className="absolute top-6 right-6 md:top-10 md:right-12 z-20 pointer-events-none">
-        <span className="text-[4rem] md:text-[7rem] font-light tracking-[0.05em] text-white/50 select-none">
+      <div className="absolute top-3 right-4 md:top-10 md:right-12 z-20 pointer-events-none">
+        <span className="text-[2.5rem] md:text-[7rem] font-light tracking-[0.05em] text-white/50 select-none">
           {chapterNum}
         </span>
       </div>
@@ -161,7 +161,7 @@ export default function NarrativeSlide({
       {/* Minimal text — bottom-left, smaller and more transparent */}
       <Link
         href={`/case-study/${project.id}`}
-        className="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-20 max-w-[70%] md:max-w-md"
+        className="absolute bottom-3 left-4 md:bottom-12 md:left-12 z-20 max-w-[78%] md:max-w-md"
       >
         <h3
           className="text-base md:text-xl font-semibold tracking-tight mb-1"

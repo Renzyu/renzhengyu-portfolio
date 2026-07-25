@@ -27,7 +27,7 @@ export default function CameraController({ scrollProgress = 0, mobileHero = fals
     const t = performance.now() / 1000;
     const cam = camera as THREE.PerspectiveCamera;
 
-    const targetDist = (mobileHero ? 1.65 : 2.5) + scrollProgress * 4.5;
+    const targetDist = (mobileHero ? 2.8 : 2.5) + scrollProgress * 4.5;
 
     targetTheta.current = t * 0.005 + (mouse.current.x - 0.5) * 0.08;
     targetPhi.current = 0.08 + 0.02 * Math.sin(t * 0.005) + (mouse.current.y - 0.5) * 0.04;
@@ -43,7 +43,7 @@ export default function CameraController({ scrollProgress = 0, mobileHero = fals
 
     cam.position.set(cx, cy, cz);
     cam.lookAt(0, 0, 0);
-    cam.fov = mobileHero ? 34 : 30;
+    cam.fov = mobileHero ? 32 : 30;
     cam.near = 0.1;
     cam.far = 25;
     cam.updateProjectionMatrix();

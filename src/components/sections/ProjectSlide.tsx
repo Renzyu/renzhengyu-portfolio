@@ -112,6 +112,16 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
 
       gsap.set(content, { opacity: 0 });
 
+      if (isMobile) {
+        gsap.set(image, { scale: 1, opacity: 1 });
+        gsap.set(overlay, { opacity: 1 });
+        gsap.set(number, { opacity: 1 });
+        gsap.set(content, { opacity: 1 });
+        gsap.set(revealInners, { y: "0%", opacity: 1 });
+        setIsVisible(true);
+        return;
+      }
+
       ScrollTrigger.create({
         trigger: section,
         start: "top bottom",
@@ -224,7 +234,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
   return (
     <section
       ref={sectionRef}
-      className="section-fullscreen relative h-[100lvh] min-h-[100lvh] overflow-hidden select-none bg-black"
+      className="section-fullscreen relative overflow-hidden select-none bg-black"
     >
       {/* Interactive image area — full bleed */}
       <div
@@ -334,15 +344,15 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
       {/* Chapter number — top right, Iconoclast-style digital anchor */}
       <div
         ref={numberRef}
-        className="absolute top-6 right-6 md:top-10 md:right-12 z-20 pointer-events-none"
+        className="absolute top-3 right-4 md:top-10 md:right-12 z-20 pointer-events-none"
       >
-        <span className="text-[4rem] md:text-[7rem] font-light tracking-[0.05em] text-white/70 select-none">
+        <span className="text-[2.5rem] md:text-[7rem] font-light tracking-[0.05em] text-white/70 select-none">
           {chapterNum}
         </span>
       </div>
 
       {/* Content — bottom left, Iconoclast-style minimal film credits */}
-      <div className="absolute bottom-6 md:bottom-16 left-5 md:left-12 z-20 pointer-events-none">
+      <div className="absolute bottom-3 md:bottom-16 left-4 md:left-12 z-20 pointer-events-none">
         <div
           ref={contentRef}
           className="relative max-w-[75%] md:max-w-lg"
