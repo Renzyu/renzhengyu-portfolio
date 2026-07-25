@@ -75,29 +75,34 @@ function EntranceController({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function AISpace({ scrollProgress = 0, hoveredChapter = null, stageProgress = 0 }: { scrollProgress?: number; hoveredChapter?: string | null; stageProgress?: number }) {
+export default function AISpace({ scrollProgress = 0, hoveredChapter = null, stageProgress = 0, mobileHero = false }: { scrollProgress?: number; hoveredChapter?: string | null; stageProgress?: number; mobileHero?: boolean }) {
   return (
     <div className="absolute inset-0 w-full h-full">
       <Canvas
         gl={{ antialias: true, alpha: true, toneMapping: 3, toneMappingExposure: 0.7 }}
-        dpr={[1, 2]}
+        dpr={mobileHero ? 1 : [1, 2]}
+        performance={{ min: 0.6 }}
         style={{ width: "100%", height: "100%" }}
       >
-        <CameraController scrollProgress={scrollProgress} />
+        <CameraController scrollProgress={scrollProgress} mobileHero={mobileHero} />
         <SceneEnvironment />
-        <AmbientParticles />
+        {!mobileHero && <AmbientParticles />}
         <DynamicLight />
         <EntranceController>
           <HeroObject scrollProgress={scrollProgress} hoveredChapter={hoveredChapter} stageProgress={stageProgress} />
-          <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} />
+          {!mobileHero && <HeroText3D scrollProgress={scrollProgress} stageProgress={stageProgress} />}
         </EntranceController>
-        <ProjectNode index={0} title="AI-BRAIN" position={[1.2, 1.5, 1.2]} />
-        <ProjectNode index={1} title="AI-CREATION" position={[-1.5, 3, 1.8]} />
-        <ProjectNode index={2} title="AI-WORKFLOW" position={[1.8, 4.5, 2.2]} />
-        <ProjectNode index={3} title="AI-THINKING" position={[-2, 6, 2.5]} />
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.4} luminanceSmoothing={0.05} intensity={0.5} mipmapBlur />
-        </EffectComposer>
+        {!mobileHero && (
+          <>
+            <ProjectNode index={0} title="AI-BRAIN" position={[1.2, 1.5, 1.2]} />
+            <ProjectNode index={1} title="AI-CREATION" position={[-1.5, 3, 1.8]} />
+            <ProjectNode index={2} title="AI-WORKFLOW" position={[1.8, 4.5, 2.2]} />
+            <ProjectNode index={3} title="AI-THINKING" position={[-2, 6, 2.5]} />
+            <EffectComposer>
+              <Bloom luminanceThreshold={0.4} luminanceSmoothing={0.05} intensity={0.5} mipmapBlur />
+            </EffectComposer>
+          </>
+        )}
       </Canvas>
     </div>
   );

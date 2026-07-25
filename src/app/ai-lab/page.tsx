@@ -1732,15 +1732,23 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
     >
       <AiOsBackButton />
 
-      <section className="relative h-[82svh] min-h-[620px] overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ transform: "scale(0.64)", transformOrigin: "50% 44%" }}
-        >
-          <AISpace scrollProgress={0} hoveredChapter={null} stageProgress={0} />
-        </div>
+        <section className="relative h-[100lvh] min-h-[680px] overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <AISpace scrollProgress={0} hoveredChapter={null} stageProgress={0} mobileHero />
+          </div>
 
-        <div className="absolute inset-x-6 bottom-14 z-20 text-center">
+          <div
+            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 select-none text-center text-[clamp(4.8rem,25vw,7rem)] font-semibold leading-none tracking-[-0.08em]"
+            style={{
+              color: "rgba(225,241,255,0.44)",
+              textShadow: "0 0 34px rgba(171,216,255,0.32)",
+              mixBlendMode: "screen",
+            }}
+          >
+            AI-OS
+          </div>
+
+          <div className="absolute inset-x-6 bottom-10 z-20 text-center">
           <p className="text-[10px] font-light leading-relaxed tracking-[0.16em]" style={{ color: "rgba(242,250,255,0.58)" }}>
             AN EVOLVING CREATIVE OPERATING SYSTEM BUILT WITH AI
           </p>
@@ -1751,7 +1759,7 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
         </div>
       </section>
 
-      <section className="relative z-20 px-4 pb-24">
+        <section className="relative z-20 px-4 pb-24 pt-6">
         <div className="mx-auto flex w-full max-w-md flex-col gap-4">
           {CHAPTER_NODES.map((node) => (
             <button

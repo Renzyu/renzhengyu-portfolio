@@ -63,9 +63,15 @@ body {
 }
 
 @media (max-width: 767px) {
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    background-attachment: scroll;
+  }
   .section-fullscreen {
-    min-height: 100dvh;
-    height: auto;
+    min-height: 100lvh;
+    height: 100lvh;
   }
   .hero-fullscreen {
     min-height: 100dvh;

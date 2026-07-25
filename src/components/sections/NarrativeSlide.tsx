@@ -78,7 +78,7 @@ export default function NarrativeSlide({
   return (
     <div
       ref={sectionRef}
-      className="relative h-full"
+      className="relative h-[100lvh] min-h-[100lvh]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onTouchStart={handleTouchStart}
@@ -87,13 +87,13 @@ export default function NarrativeSlide({
       {/* Full-screen image */}
       <Link
         href={`/case-study/${project.id}`}
-        className="absolute inset-x-0 top-0 h-[70svh] md:inset-0 md:h-auto block"
+        className="absolute inset-0 block"
       >
         <Image
           src={currentSrc}
           alt={project.title}
           fill
-          className="object-contain md:object-cover"
+          className="object-cover"
           sizes="100vw"
         />
       </Link>

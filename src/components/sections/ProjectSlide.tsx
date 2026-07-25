@@ -224,11 +224,11 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
   return (
     <section
       ref={sectionRef}
-      className="section-fullscreen relative overflow-hidden select-none bg-black"
+      className="section-fullscreen relative h-[100lvh] min-h-[100lvh] overflow-hidden select-none bg-black"
     >
       {/* Interactive image area — full bleed */}
       <div
-        className="absolute inset-x-0 top-0 h-[68svh] md:inset-0 md:h-auto z-10"
+        className="absolute inset-0 z-10"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -245,7 +245,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
             src={currentSrc}
             alt={project.title}
             fill
-            className="object-contain md:object-cover"
+            className="object-cover"
             style={{ objectPosition: "center center" }}
             loading={index > 2 ? "lazy" : undefined}
             sizes="100vw"
@@ -288,7 +288,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
           onClick={prevImage}
           onMouseEnter={() => setArrowHovered("left")}
           onMouseLeave={() => setArrowHovered(null)}
-          className="absolute left-3 md:left-10 top-[34svh] md:top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
+          className="absolute left-3 md:left-10 top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
           style={{
             opacity: hovered ? 0.8 : 0.3,
             transform: `translateY(-50%) ${arrowHovered === "left" ? "translateX(-5px)" : "translateX(0)"}`,
@@ -308,7 +308,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
           onClick={nextImage}
           onMouseEnter={() => setArrowHovered("right")}
           onMouseLeave={() => setArrowHovered(null)}
-          className="absolute right-3 md:right-10 top-[34svh] md:top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
+          className="absolute right-3 md:right-10 top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
           style={{
             opacity: hovered ? 0.8 : 0.3,
             transform: `translateY(-50%) ${arrowHovered === "right" ? "translateX(5px)" : "translateX(0)"}`,
@@ -324,7 +324,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
 
       {/* Image counter — bottom right, film-strip counter */}
       {total > 1 && (
-        <div className="absolute bottom-[33svh] md:bottom-12 right-5 md:right-12 z-20 pointer-events-none">
+        <div className="absolute bottom-8 md:bottom-12 right-5 md:right-12 z-20 pointer-events-none">
           <span className="text-[11px] md:text-sm tracking-[0.12em] font-light text-white/50">
             {counter}
           </span>
