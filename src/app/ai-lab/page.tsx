@@ -428,22 +428,7 @@ function AgentNode({
     const el = nodeRef.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, scale: 0.85 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          delay: 0.4 + index * 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
+      gsap.set(el, { opacity: 1, scale: 1 });
     }, el);
     return () => ctx.revert();
   }, [index]);
@@ -654,7 +639,7 @@ function BrainVisualization() {
   const angles = AGENT_NODES.map((_, i) => (i / N) * 360 - 90);
 
   // Radius as percentage of canvas size
-  const RADIUS_PCT = 32;
+  const RADIUS_PCT = 34;
 
   return (
     <section className="relative z-10 min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
@@ -683,10 +668,10 @@ function BrainVisualization() {
       {/* ── Canvas — viewport-centered diagram ── */}
       <div
         ref={canvasRef}
-        className="relative w-full flex-1 flex items-center justify-center"
+        className="relative flex-none flex items-center justify-center"
         style={{
-          maxWidth: isMobile ? "100%" : "1080px",
-          maxHeight: isMobile ? "none" : "78vh",
+          width: isMobile ? "100%" : "min(70vw, 760px)",
+          height: isMobile ? "auto" : "min(70vw, 760px)",
           aspectRatio: isMobile ? "auto" : "1 / 1",
           transformOrigin: "center center",
         }}
@@ -1196,7 +1181,7 @@ function AIBrainIntro() {
       ref={sectionRef}
       className="relative z-10 w-full py-24 md:py-36 overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      <div className="relative left-1/2 w-full max-w-3xl -translate-x-1/2 px-4 sm:px-6">
         {/* Section label */}
         <div className="mb-12 md:mb-14 text-center">
           <p
@@ -1225,10 +1210,10 @@ function AIBrainIntro() {
             <div
               key={phase.phase}
               data-ab-card
-              className="opacity-0 mb-10 sm:mb-12 last:mb-0"
+              className="opacity-0 mb-12 sm:mb-16 last:mb-0"
             >
               <div
-                className="relative p-7 sm:p-9 md:p-10 rounded-2xl overflow-hidden"
+                className="relative p-8 sm:p-10 md:p-12 rounded-2xl overflow-hidden"
                 style={{
                   background: "rgba(255,255,255,0.025)",
                   backdropFilter: "blur(24px)",
@@ -1733,10 +1718,11 @@ function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void 
           </div>
 
           <div
-            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 select-none text-center text-[clamp(4.8rem,25vw,7rem)] font-semibold leading-none tracking-[-0.08em]"
+            className="ai-os-rush-title absolute inset-x-0 top-1/2 z-10 select-none text-center text-[clamp(4.8rem,25vw,7rem)] font-semibold leading-none tracking-[-0.08em]"
             style={{
-              color: "rgba(225,241,255,0.44)",
-              textShadow: "0 0 34px rgba(171,216,255,0.32)",
+              color: "rgba(220,240,255,0.22)",
+              WebkitTextStroke: "1px rgba(235,248,255,0.36)",
+              textShadow: "0 0 18px rgba(220,240,255,0.45), 0 0 48px rgba(121,184,235,0.28)",
               mixBlendMode: "screen",
             }}
           >
@@ -2258,10 +2244,10 @@ function AIAssistantContent() {
         </p>
       </div>
 
-      <div className="w-full max-w-2xl mx-auto space-y-4">
+      <div className="w-full max-w-3xl mx-auto space-y-8 md:space-y-10">
         {TEAM.map((member, i) => (
           <div key={member.name} data-agent-card className="opacity-0">
-            <div className="relative p-5 sm:p-6 rounded-xl overflow-hidden"
+            <div className="relative p-7 sm:p-9 rounded-2xl overflow-hidden"
               style={{
                 background: "rgba(255,255,255,0.025)",
                 backdropFilter: "blur(24px)",

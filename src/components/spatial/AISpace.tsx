@@ -42,23 +42,23 @@ function EntranceController({ children }: { children: React.ReactNode }) {
     const el = groupRef.current;
     gsap.to(el.position, {
       z: 0,
-      duration: 1.1,
-      ease: "power3.out",
+      duration: 0.72,
+      ease: "power4.out",
       overwrite: "auto",
     });
     gsap.to(el.scale, {
       x: 1,
       y: 1,
       z: 1,
-      duration: 1.1,
-      ease: "power3.out",
+      duration: 0.72,
+      ease: "power4.out",
       overwrite: "auto",
     });
     gsap.to(el.rotation, {
       x: 0,
       y: 0,
-      duration: 1.0,
-      ease: "power3.out",
+      duration: 0.68,
+      ease: "power4.out",
       overwrite: "auto",
     });
   }, [sceneReady]);
@@ -66,9 +66,9 @@ function EntranceController({ children }: { children: React.ReactNode }) {
   return (
     <group
       ref={groupRef}
-      scale={[0.91, 0.91, 0.91]}
-      position={[0, 0, -0.35]}
-      rotation={[0.035, -0.045, 0]}
+      scale={[0.06, 0.06, 0.06]}
+      position={[0, 0, -3.8]}
+      rotation={[0.08, -0.12, 0]}
     >
       {children}
     </group>
