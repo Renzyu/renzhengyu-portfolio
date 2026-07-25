@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text3D } from "@react-three/drei";
+import { assetPath } from "@/lib/asset-path";
 import * as THREE from "three";
 
 export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { scrollProgress?: number; stageProgress?: number }) {
@@ -97,11 +98,11 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0 }: { 
     <group position={[0, 0.15, 0.35]}>
       <group ref={scaleRef}>
         <group ref={swayRef}>
-          <Text3D font="/fonts/helvetiker_bold.typeface.json" size={0.22} height={0.1} bevelEnabled bevelThickness={0.04} bevelSize={0.015} bevelSegments={6} curveSegments={20}>
+          <Text3D font={assetPath("/fonts/helvetiker_bold.typeface.json")} size={0.22} height={0.1} bevelEnabled bevelThickness={0.04} bevelSize={0.015} bevelSegments={6} curveSegments={20}>
             AI-OS
             <meshPhysicalMaterial color="#c0d8f0" metalness={0} roughness={0.06} transparent opacity={0.12} envMapIntensity={3.0} clearcoat={1} clearcoatRoughness={0.05} side={THREE.DoubleSide} depthWrite={false} />
           </Text3D>
-          <Text3D font="/fonts/helvetiker_bold.typeface.json" size={0.214} height={0.095} bevelEnabled bevelThickness={0.02} bevelSize={0.008} bevelSegments={4} curveSegments={20}>
+          <Text3D font={assetPath("/fonts/helvetiker_bold.typeface.json")} size={0.214} height={0.095} bevelEnabled bevelThickness={0.02} bevelSize={0.008} bevelSegments={4} curveSegments={20}>
             AI-OS
             <meshPhysicalMaterial ref={innerMatRef} color="#c8e8ff" metalness={0} roughness={0.1} emissive="#6688dd" emissiveIntensity={0.8} transparent opacity={0.5} side={THREE.DoubleSide} depthWrite={false} />
           </Text3D>

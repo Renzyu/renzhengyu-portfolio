@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { assetPath } from "@/lib/asset-path";
 import ScrollHint from "@/components/layout/ScrollHint";
 
 export default function Hero() {
@@ -167,7 +168,7 @@ export default function Hero() {
       >
         <div className="relative w-full h-full">
           <Image
-            src="/images/hero/hero-desktop.webp"
+            src={assetPath("/images/hero/hero-desktop.webp")}
             alt=""
             fill
             className="object-cover"

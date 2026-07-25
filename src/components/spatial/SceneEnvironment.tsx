@@ -1,6 +1,7 @@
 "use client";
 
 import { Environment, Lightformer } from "@react-three/drei";
+import { assetPath } from "@/lib/asset-path";
 
 export default function SceneEnvironment() {
   return (
@@ -17,7 +18,7 @@ export default function SceneEnvironment() {
 
       {/* Front fill */}
       <pointLight position={[0, 2, 5]} intensity={0.06} color="#507090" distance={10} />{/* Local HDR + Lightformers for controlled reflections */}
-      <Environment files="/studio.hdr" resolution={256}>
+      <Environment files={assetPath("/studio.hdr")} resolution={256}>
         {/* Top-wide cold reflection band — creates main highlight on ring */}
         <Lightformer
           form="rect"

@@ -27,7 +27,7 @@ export interface Project {
   color?: string
 }
 
-export const projects: Project[] = [
+const rawProjects: Project[] = [
   // ============ Commercial (商业影像) ============
   {
     id: "maxrieny",
@@ -334,6 +334,29 @@ export const projects: Project[] = [
     buttonLabel: "View Project ▸",
   },
 ]
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+const assetPath = (path: string) => `${basePath}${path}`
+
+export const projects: Project[] = rawProjects.map((project) => ({
+  ...project,
+  images: {
+    cover: {
+      desktop: assetPath(project.images.cover.desktop),
+      desktop2x: assetPath(project.images.cover.desktop2x),
+      mobile: assetPath(project.images.cover.mobile),
+    },
+    gallery: project.images.gallery.map(assetPath),
+    stills: project.images.stills.map(assetPath),
+    bts: project.images.bts.map(assetPath),
+  },
+  assets: {
+    ...project.assets,
+    heroImage: project.assets.heroImage
+      ? assetPath(project.assets.heroImage)
+      : undefined,
+  },
+}))
 
 export const selectedWorks = projects.filter((p) => p.category === "commercial")
 export const narrativeWorks = projects.filter((p) => p.category === "narrative")
