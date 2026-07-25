@@ -25,6 +25,17 @@ export default function Home() {
     const glow = glowRef.current;
     if (!glass || !edge || !scatter || !glow) return;
 
+    // Touch screens have no hover cursor. Preserve the glass look with a
+    // static light field instead of rebuilding large gradients every frame.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      edge.style.background =
+        "radial-gradient(ellipse at 50% 45%, rgba(180,210,245,0.10) 0%, transparent 55%)";
+      scatter.style.background =
+        "radial-gradient(ellipse at 50% 40%, rgba(220,230,255,0.06) 0%, transparent 65%)";
+      glow.style.opacity = "0";
+      return;
+    }
+
     let rafId: number;
     let mx = 0.5, my = 0.5;
     let scrollProgress = 0;

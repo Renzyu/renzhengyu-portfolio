@@ -78,7 +78,6 @@ const rawProjects: Project[] = [
         "/images/projects/arcteryx/gallery-01.webp",
         "/images/projects/arcteryx/gallery-02.webp",
         "/images/projects/arcteryx/gallery-03.webp",
-        "/images/projects/arcteryx/gallery-04.webp",
       ],
       stills: [],
       bts: [],
@@ -186,7 +185,7 @@ const rawProjects: Project[] = [
       cover: {
         desktop: "/images/projects/valorant/cover-desktop.webp",
         desktop2x: "/images/projects/valorant/cover-desktop.webp",
-        mobile: "/images/projects/valorant/cover-mobile.webp",
+        mobile: "/images/projects/valorant/cover-desktop.webp",
       },
       gallery: [
         "/images/projects/valorant/gallery-01.webp",
@@ -212,7 +211,7 @@ const rawProjects: Project[] = [
       cover: {
         desktop: "/images/projects/love-deepspace/cover-desktop.webp",
         desktop2x: "/images/projects/love-deepspace/cover-desktop.webp",
-        mobile: "/images/projects/love-deepspace/cover-mobile.webp",
+        mobile: "/images/projects/love-deepspace/cover-desktop.webp",
       },
       gallery: [
         "/images/projects/love-deepspace/gallery-01.webp",
@@ -239,15 +238,15 @@ const rawProjects: Project[] = [
     images: {
       cover: {
         desktop: "/images/projects/lol-charity/cover-desktop.webp",
-        desktop2x: "/images/projects/lol-charity/cover-desktop@2x.webp",
-        mobile: "/images/projects/lol-charity/cover-mobile.webp",
+        desktop2x: "/images/projects/lol-charity/cover-desktop.webp",
+        mobile: "/images/projects/lol-charity/cover-desktop.webp",
       },
       gallery: [
         "/images/projects/lol-charity/cover-desktop.webp",
         "/images/projects/lol-charity/gallery-01.webp",
       ],
-      stills: ["/images/projects/lol-charity/still-01.webp"],
-      bts: ["/images/projects/lol-charity/bts-01.webp"],
+      stills: [],
+      bts: [],
     },
     filmUrl: "https://b23.tv/IOjAGTV",
     platform: "bilibili",
@@ -267,14 +266,14 @@ const rawProjects: Project[] = [
     images: {
       cover: {
         desktop: "/images/projects/lol-player/cover-desktop.webp",
-        desktop2x: "/images/projects/lol-player/cover-desktop@2x.webp",
-        mobile: "/images/projects/lol-player/cover-mobile.webp",
+        desktop2x: "/images/projects/lol-player/cover-desktop.webp",
+        mobile: "/images/projects/lol-player/cover-desktop.webp",
       },
       gallery: [
         "/images/projects/lol-player/cover-desktop.webp",
         "/images/projects/lol-player/gallery-01.webp",
       ],
-      stills: ["/images/projects/lol-player/still-01.webp"],
+      stills: [],
       bts: [],
     },
     filmUrl: "https://b23.tv/7pnf3UX",
@@ -320,7 +319,7 @@ const rawProjects: Project[] = [
       cover: {
         desktop: "/images/projects/helanyan/cover-desktop.webp",
         desktop2x: "/images/projects/helanyan/cover-desktop.webp",
-        mobile: "/images/projects/helanyan/cover-mobile.webp",
+        mobile: "/images/projects/helanyan/cover-desktop.webp",
       },
       gallery: [
         "/images/projects/helanyan/gallery-01.webp",
@@ -338,22 +337,25 @@ const rawProjects: Project[] = [
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 const assetPath = (path: string) => `${basePath}${path}`
 
+const optimizedImagePath = (source: string) =>
+  assetPath(source.replace(/^\/images\//, "/optimized-images/"))
+
 export const projects: Project[] = rawProjects.map((project) => ({
   ...project,
   images: {
     cover: {
-      desktop: assetPath(project.images.cover.desktop),
-      desktop2x: assetPath(project.images.cover.desktop2x),
-      mobile: assetPath(project.images.cover.mobile),
+      desktop: optimizedImagePath(project.images.cover.desktop),
+      desktop2x: optimizedImagePath(project.images.cover.desktop2x),
+      mobile: optimizedImagePath(project.images.cover.mobile),
     },
-    gallery: project.images.gallery.map(assetPath),
-    stills: project.images.stills.map(assetPath),
-    bts: project.images.bts.map(assetPath),
+    gallery: project.images.gallery.map(optimizedImagePath),
+    stills: project.images.stills.map(optimizedImagePath),
+    bts: project.images.bts.map(optimizedImagePath),
   },
   assets: {
     ...project.assets,
     heroImage: project.assets.heroImage
-      ? assetPath(project.assets.heroImage)
+      ? optimizedImagePath(project.assets.heroImage)
       : undefined,
   },
 }))

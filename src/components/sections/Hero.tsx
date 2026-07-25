@@ -63,6 +63,14 @@ export default function Hero() {
       });
     }, section);
 
+    // Touch devices keep the cinematic entrance without spending battery on
+    // mouse-only parallax and glow calculations.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      catchlight.style.opacity = "0";
+      mouseGlow.style.opacity = "0";
+      return () => ctx.revert();
+    }
+
     // ── Continuous micro-animation + 3D parallax loop ──
     let rafId: number;
     let startTime = performance.now();
@@ -168,7 +176,7 @@ export default function Hero() {
       >
         <div className="relative w-full h-full">
           <Image
-            src={assetPath("/images/hero/hero-desktop.webp")}
+            src={assetPath("/optimized-images/hero/hero-desktop.webp")}
             alt=""
             fill
             className="object-cover"
