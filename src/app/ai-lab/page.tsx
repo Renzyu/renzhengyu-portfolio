@@ -1270,7 +1270,7 @@ function AIBrainIntro() {
                 />
               </div>
               {i < BUILD_PHASES.length - 1 && (
-                <div className="flex h-28 items-center justify-center" aria-hidden>
+                <div className="flex h-20 items-center justify-center" aria-hidden>
                   <div
                     className="flex h-11 w-11 items-center justify-center rounded-full text-sm"
                     style={{
@@ -1550,9 +1550,9 @@ function SpaceProjectNodes({ scrollProgress, stageProgress, hoveredChapter, onHo
         // Exit after 0.66 — DISABLED, using screen-space CSS transform on stage wrapper
         const exitY = 0;
 
-        // Shorter entry distance
+        // Keep every card fully outside the viewport on its first visible frame.
         const angle = Math.atan2(node.y, node.x);
-        const dist = 60;
+        const dist = 125;
         const xOff = Math.cos(angle) * dist * (1 - s);
         const yOff = Math.sin(angle) * dist * (1 - s);
 
@@ -2272,7 +2272,7 @@ function AIAssistantContent() {
                 style={{ background: "linear-gradient(90deg, rgba(160,195,255,0.12), transparent)" }} />
             </div>
             {i < TEAM.length - 1 && (
-              <div className="flex h-28 items-center justify-center" aria-hidden>
+              <div className="flex h-20 items-center justify-center" aria-hidden>
                 <div
                   className="flex h-11 w-11 items-center justify-center rounded-full text-sm"
                   style={{

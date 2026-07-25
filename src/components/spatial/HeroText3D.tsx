@@ -81,7 +81,7 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0, mobi
     if (innerMatRef.current) {
       const pulse = 0.3 + 0.2 * Math.sin(t * 0.04);
       const hoverBonus = proximity * 0.3;
-      innerMatRef.current.emissiveIntensity = 0.8 + hoverBonus + 0.08 * pulse;
+      innerMatRef.current.emissiveIntensity = (mobileHero ? 1.02 : 0.8) + hoverBonus + 0.08 * pulse;
     }
   });
 
@@ -91,7 +91,7 @@ export default function HeroText3D({ scrollProgress = 0, stageProgress = 0, mobi
         <group ref={swayRef}>
           <Text3D font={assetPath("/fonts/helvetiker_bold.typeface.json")} size={0.22} height={0.1} bevelEnabled bevelThickness={0.04} bevelSize={0.015} bevelSegments={6} curveSegments={20}>
             AI-OS
-            <meshPhysicalMaterial color="#c0d8f0" metalness={0} roughness={0.06} transparent opacity={0.12} envMapIntensity={3.0} clearcoat={1} clearcoatRoughness={0.05} side={THREE.DoubleSide} depthWrite={false} />
+            <meshPhysicalMaterial color="#c0d8f0" emissive="#6589b8" emissiveIntensity={mobileHero ? 0.22 : 0.1} metalness={0} roughness={0.06} transparent opacity={mobileHero ? 0.17 : 0.12} envMapIntensity={3.0} clearcoat={1} clearcoatRoughness={0.05} side={THREE.DoubleSide} depthWrite={false} />
           </Text3D>
           <Text3D font={assetPath("/fonts/helvetiker_bold.typeface.json")} size={0.214} height={0.095} bevelEnabled bevelThickness={0.02} bevelSize={0.008} bevelSegments={4} curveSegments={20}>
             AI-OS
