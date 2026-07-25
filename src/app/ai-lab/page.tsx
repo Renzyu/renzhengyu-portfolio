@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, memo } from "react";
 import { useRouter } from "next/navigation";
 import { gsap } from "@/lib/gsap";
 import { usePageTransition } from "@/components/layout/PageTransition";
@@ -642,7 +642,7 @@ function BrainVisualization() {
   const RADIUS_PCT = 34;
 
   return (
-    <section className="relative z-10 min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
+    <section className="relative z-10 flex flex-col items-center justify-start overflow-hidden px-4 sm:px-6 pt-8 pb-20">
       {/* Section label — moved to top center, constrained */}
       <div className="mb-8 md:mb-10 text-center max-w-[600px] w-full">
         <p
@@ -1179,7 +1179,7 @@ function AIBrainIntro() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full py-24 md:py-36 overflow-hidden"
+      className="relative z-10 w-full pt-20 pb-8 md:pt-24 md:pb-10 overflow-hidden"
     >
       <div className="relative left-1/2 w-full max-w-3xl -translate-x-1/2 px-4 sm:px-6">
         {/* Section label */}
@@ -1849,6 +1849,10 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
   const [backVisible, setBackVisible] = useState(true);
   const [projectsReady, setProjectsReady] = useState(false);
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
   useEffect(() => {
     const media = window.matchMedia("(max-width: 767px)");
     const update = () => setIsMobile(media.matches);
@@ -1863,8 +1867,6 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
       const max = document.body.scrollHeight - window.innerHeight;
       const sp = Math.min(1, Math.max(0, window.scrollY / max));
       setScrollProgress(sp);
-      if (!projectsReady) setProjectsReady(true);
-
       // Stage progress — smooth, fully reversible, directly from scroll
       const stageRaw = Math.max(0, Math.min(1, (sp - 0.02) / 0.28));
       const stageEased = stageRaw * stageRaw * (3 - 2 * stageRaw);
@@ -1886,6 +1888,21 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const revealProjects = () => setProjectsReady(true);
+    window.addEventListener("wheel", revealProjects, { passive: true, once: true });
+    window.addEventListener("touchstart", revealProjects, { passive: true, once: true });
+    window.addEventListener("pointerdown", revealProjects, { passive: true, once: true });
+    window.addEventListener("keydown", revealProjects, { once: true });
+    return () => {
+      window.removeEventListener("wheel", revealProjects);
+      window.removeEventListener("touchstart", revealProjects);
+      window.removeEventListener("pointerdown", revealProjects);
+      window.removeEventListener("keydown", revealProjects);
+    };
+  }, [isMobile]);
 
   // Cursor dot (ring) only — DOM trail replaced by Canvas CursorLightTrail
   useEffect(() => {
@@ -2195,7 +2212,7 @@ function PortalView({ portalId, onBack }: { portalId: string; onBack: () => void
 /* ── AI-Brain content bundle ── */
 function AIBrainSection() {
   return (
-    <section className="relative z-10 min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 pt-28 md:pt-24">
+    <section className="relative z-10 flex flex-col items-center justify-start px-4 sm:px-6 pt-28 md:pt-24">
       <div className="text-center max-w-3xl mx-auto mb-8">
         <p className="text-[10px] sm:text-xs tracking-[0.15em] mb-4 font-light animate-breathe" style={{ color: "var(--color-text-muted)" }}>01 · Personal Intelligence System</p>
         <h2 className="text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tight leading-[1.0]" style={{ color: "var(--color-text)" }}>AI·BRAIN</h2>
