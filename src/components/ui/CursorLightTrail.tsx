@@ -2,32 +2,32 @@
 
 import { useEffect, useRef } from "react";
 
-/* ── Optimized fluid light cursor trail ──
-   - Fixed ring buffer (no push/shift GC)
-   - Sleeps when idle (no rAF when nothing to draw)
-   - Pre-allocated sample arrays
-   - No .slice(), .push(), .shift() in hot path  */
+/* ── Ultra‑long fluid light cursor trail ──
+   - Real‑history based (no chain‑following)
+   - Instant head tracking (high lerp)
+   - Arc‑length trail cutting
+   - getCoalescedEvents for fast motion
+   - Ring buffer, sleep when idle  */
 
-const MAX_PTS = 36;
-const SAMPLE_BUDGET = 300;
+const MAX_PTS = 104;
+const SAMPLE_BUDGET = 900;
 
 export default function CursorLightTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef(0);
-  // Ring buffer for history points
+  // Ring buffer — real pointer history
   const bx = useRef(new Float64Array(MAX_PTS));
   const by = useRef(new Float64Array(MAX_PTS));
   const bt = useRef(new Float64Array(MAX_PTS));
   const bHead = useRef(0);
   const bLen = useRef(0);
-  const smoothX = useRef(-200);
-  const smoothY = useRef(-200);
+  const headX = useRef(-200);
+  const headY = useRef(-200);
   const rawX = useRef(-200);
   const rawY = useRef(-200);
   const speed = useRef(0);
   const alive = useRef(false);
   const drawing = useRef(false);
-  const sleepTimer = useRef(0);
 
   useEffect(() => {
     const mqFine = window.matchMedia("(pointer: fine) and (hover: hover)");
@@ -64,26 +64,37 @@ export default function CursorLightTrail() {
       if (bLen.current < MAX_PTS) bLen.current++;
     }
     function getPt(i: number) {
-      // i = 0 = oldest, i = len-1 = newest
       const idx = (bHead.current - bLen.current + i + MAX_PTS) % MAX_PTS;
       return { x: bx.current[idx], y: by.current[idx], t: bt.current[idx] };
     }
     function clearPts() { bHead.current = 0; bLen.current = 0; }
-    function dropOldest() {
-      if (bLen.current > 0) { bLen.current--; }
-    }
+    function dropOldest() { if (bLen.current > 0) bLen.current--; }
 
     /* ── Pre-allocated sample array ── */
     const sx = new Float64Array(SAMPLE_BUDGET);
     const sy = new Float64Array(SAMPLE_BUDGET);
     const sage = new Float64Array(SAMPLE_BUDGET);
 
-    const ageMax = mqReduce.matches ? 280 : 550;
+    const ageMax = mqReduce.matches ? 600 : 1500;
 
     /* ── Pointer events ── */
     const onMove = (e: PointerEvent) => {
-      rawX.current = e.clientX;
-      rawY.current = e.clientY;
+      // Use coalesced events for high-speed intermediate positions
+      const pts = (e as any).getCoalescedEvents?.() ?? [e];
+      for (const p of pts) {
+        rawX.current = p.clientX;
+        rawY.current = p.clientY;
+        // Record raw real position directly (no smoothing)
+        if (bLen.current === 0) {
+          pushPt(p.clientX, p.clientY, performance.now());
+        } else {
+          const last = getPt(bLen.current - 1);
+          const dx = p.clientX - last.x, dy = p.clientY - last.y;
+          if (dx * dx + dy * dy > 9) { // ~3px threshold
+            pushPt(p.clientX, p.clientY, performance.now());
+          }
+        }
+      }
       alive.current = true;
       if (!drawing.current) {
         drawing.current = true;
@@ -93,6 +104,7 @@ export default function CursorLightTrail() {
     const onLeave = () => { alive.current = false; };
     const onEnter = () => {
       const x = rawX.current, y = rawY.current;
+      headX.current = x; headY.current = y;
       clearPts();
       for (let i = 0; i < 6; i++) pushPt(x, y, performance.now());
     };
@@ -109,24 +121,13 @@ export default function CursorLightTrail() {
 
     /* ── Tick ── */
     const tick = (now: number) => {
-      // 1. Smooth head
-      smoothX.current += (rawX.current - smoothX.current) * 0.46;
-      smoothY.current += (rawY.current - smoothY.current) * 0.4;
+      // 1. Head tracking — nearly instant (0.82 ≈ 1‑frame delay)
+      headX.current += (rawX.current - headX.current) * 0.82;
+      headY.current += (rawY.current - headY.current) * 0.82;
 
-      // 2. Record point if moved enough
-      if (bLen.current === 0) {
-        pushPt(smoothX.current, smoothY.current, now);
-      } else {
-        const last = getPt(bLen.current - 1);
-        const dx = smoothX.current - last.x, dy = smoothY.current - last.y;
-        if (dx * dx + dy * dy > 2.25) {
-          pushPt(smoothX.current, smoothY.current, now);
-        }
-      }
-
-      // 3. Speed from last 5 points (no slice)
-      if (bLen.current >= 2) {
-        const end = Math.min(bLen.current, 5);
+      // 2. Speed from last 6 real points
+      if (bLen.current >= 3) {
+        const end = Math.min(bLen.current, 6);
         let dist = 0;
         for (let i = bLen.current - end + 1; i < bLen.current; i++) {
           const p1 = getPt(i - 1), p2 = getPt(i);
@@ -136,10 +137,10 @@ export default function CursorLightTrail() {
         const p0 = getPt(bLen.current - end), pn = getPt(bLen.current - 1);
         const dt = (pn.t - p0.t) || 1;
         const rawSpd = dist / dt;
-        speed.current += (rawSpd - speed.current) * 0.15;
+        speed.current += (rawSpd - speed.current) * 0.22;
       }
 
-      // 4. Age-based removal
+      // 3. Age‑based removal
       const cutoff = now - ageMax;
       while (bLen.current > 0 && bt.current[(bHead.current - bLen.current + MAX_PTS) % MAX_PTS] < cutoff) {
         dropOldest();
@@ -149,7 +150,7 @@ export default function CursorLightTrail() {
         if (oldest.t < cutoff) dropOldest();
       }
 
-      // 5. Draw if enough points
+      // 4. Draw
       if (bLen.current >= 3) {
         const n = bLen.current;
         const totalAge = bt.current[(bHead.current - 1 + MAX_PTS) % MAX_PTS] - bt.current[(bHead.current - n + MAX_PTS) % MAX_PTS] || 1;
@@ -175,32 +176,37 @@ export default function CursorLightTrail() {
         if (sCount >= 2) {
           ctx!.clearRect(0, 0, w, h);
           const speedNorm = Math.min(1, speed.current / 1.2);
-          const baseW = mqReduce.matches ? 6 : 10;
-          const wBoost = 1 + speedNorm * 0.2;
-          const trailN = Math.min(sCount, Math.floor(20 + speedNorm * 25));
-          const startI = Math.max(0, sCount - trailN);
-          const span = sCount - startI - 1 || 1;
 
-          // Two-pass: outer glow layer + inner core, drawn segment by segment
+          // Arc-length based trail cutting
+          const maxLen = Math.min(w * 0.78, 1400);
+          const minLen = 280;
+          const targetLen = minLen + (maxLen - minLen) * (speedNorm * speedNorm * (3 - 2 * speedNorm));
+
+          // Walk from head (sCount-1) backward, accumulate arc length
+          let acc = 0;
+          let cutI = 0;
+          for (let i = sCount - 1; i > 0; i--) {
+            acc += Math.sqrt((sx[i] - sx[i - 1]) ** 2 + (sy[i] - sy[i - 1]) ** 2);
+            if (acc >= targetLen) { cutI = i; break; }
+          }
+          const drawStart = cutI;
+          const span = sCount - drawStart - 1 || 1;
+
+          const baseW = mqReduce.matches ? 6 : 11;
+
           for (let pass = 0; pass < 2; pass++) {
             const isOuter = pass === 0;
             const maxW = isOuter
-              ? (baseW * 2.2 + 3 * speedNorm) * 0.6
-              : (baseW + 2 * speedNorm) * 0.5;
+              ? (baseW * 2.2 + 3 * speedNorm) * 0.55
+              : (baseW + 2 * speedNorm) * 0.45;
 
-            for (let i = startI; i < sCount - 1; i++) {
-              const t = (i - startI) / span; // 0 = head, 1 = tail
-              const si = (i - startI) / span;
-
-              // Conical width: thick near head, pow decay to fine tail
-              const widthFactor = 1 - si;
-              const conicalW = maxW * Math.pow(widthFactor, isOuter ? 1.2 : 1.6);
+            for (let i = drawStart; i < sCount - 1; i++) {
+              const t = (i - drawStart) / span;
+              const wf = t;
+              const conicalW = maxW * Math.pow(wf, isOuter ? 1.2 : 1.65);
               const lineW = Math.max(isOuter ? 0.3 : 0.15, conicalW);
-
-              // Alpha: bright head, transparent tail
-              const alphaHead = isOuter ? 0.12 : 0.92;
-              const alphaFactor = Math.pow(widthFactor, isOuter ? 1.8 : 2.2);
-              const alpha = alphaHead * alphaFactor;
+              const alphaH = isOuter ? 0.10 : 0.88;
+              const alpha = alphaH * Math.pow(wf, isOuter ? 1.8 : 2.2);
 
               ctx!.beginPath();
               ctx!.moveTo(sx[i], sy[i]);
@@ -210,7 +216,7 @@ export default function CursorLightTrail() {
               if (isOuter) {
                 ctx!.strokeStyle = `rgba(160,205,235,${Math.max(0, alpha * 0.5)})`;
               } else {
-                ctx!.strokeStyle = `rgba(${220 + Math.floor(30 * widthFactor)},${238 + Math.floor(17 * widthFactor)},255,${Math.max(0, alpha)})`;
+                ctx!.strokeStyle = `rgba(${220 + Math.floor(30 * wf)},${238 + Math.floor(17 * wf)},255,${Math.max(0, alpha)})`;
               }
               ctx!.stroke();
             }
@@ -220,13 +226,13 @@ export default function CursorLightTrail() {
         ctx!.clearRect(0, 0, w, h);
       }
 
-      // 6. Decide: keep running or sleep
       const hasContent = alive.current || bLen.current > 0;
       if (hasContent && !document.hidden) {
         rafRef.current = requestAnimationFrame(tick);
       } else {
         drawing.current = false;
         clearPts();
+        ctx!.clearRect(0, 0, w, h);
       }
     };
 
