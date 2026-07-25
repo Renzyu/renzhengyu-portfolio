@@ -572,7 +572,19 @@ function AgentNode({
             {agent.label}
           </h3>
 
-          {/* Details rise above adjacent nodes only while this node is active */}
+          <p
+            className="relative z-10 mt-2 text-xs font-light leading-relaxed"
+            style={{
+              color: "rgba(238,247,252,0.74)",
+              maxHeight: isHovered ? "260px" : "58px",
+              overflow: "hidden",
+              transition: "max-height 420ms ease",
+            }}
+          >
+            {agent.description}
+          </p>
+
+          {/* Capabilities appear when active */}
           <div
             className="relative z-10 overflow-hidden transition-all duration-500"
             style={{
@@ -580,12 +592,6 @@ function AgentNode({
               opacity: expanded ? 1 : 0,
             }}
           >
-            <p
-              className="mt-2 max-w-sm text-xs sm:text-sm font-light leading-relaxed"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              {agent.description}
-            </p>
             <div
               className="mt-3 pt-3"
               style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
@@ -648,7 +654,7 @@ function BrainVisualization() {
   const angles = AGENT_NODES.map((_, i) => (i / N) * 360 - 90);
 
   // Radius as percentage of canvas size
-  const RADIUS_PCT = 39;
+  const RADIUS_PCT = 32;
 
   return (
     <section className="relative z-10 min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
@@ -679,8 +685,8 @@ function BrainVisualization() {
         ref={canvasRef}
         className="relative w-full flex-1 flex items-center justify-center"
         style={{
-          maxWidth: isMobile ? "100%" : "1280px",
-          maxHeight: isMobile ? "none" : "82vh",
+          maxWidth: isMobile ? "100%" : "1080px",
+          maxHeight: isMobile ? "none" : "78vh",
           aspectRatio: isMobile ? "auto" : "1 / 1",
           transformOrigin: "center center",
         }}
@@ -824,7 +830,7 @@ function BrainVisualization() {
                     left: `${left}%`,
                     top: `${top}%`,
                     transform: `translate(${offsetX}%, ${activeOffsetY}%)`,
-                    width: "clamp(170px, 15vw, 230px)",
+                    width: "clamp(190px, 16vw, 250px)",
                     zIndex: hoveredId === agent.id ? 60 : 10,
                     transition: "transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1)",
                   }}
@@ -886,7 +892,7 @@ function WorkflowTimeline() {
       ref={sectionRef}
       className="relative z-10 w-full py-24 md:py-32 overflow-hidden"
     >
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="relative left-1/2 w-full max-w-5xl -translate-x-1/2 px-6">
         {/* Section label — centered */}
         <div className="mb-16 md:mb-20 opacity-0 text-center" data-animate="section-label">
           <p
@@ -1188,7 +1194,7 @@ function AIBrainIntro() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full py-20 md:py-28 overflow-hidden"
+      className="relative z-10 w-full py-24 md:py-36 overflow-hidden"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Section label */}
@@ -1219,10 +1225,10 @@ function AIBrainIntro() {
             <div
               key={phase.phase}
               data-ab-card
-              className="opacity-0 mb-6 sm:mb-8 last:mb-0"
+              className="opacity-0 mb-10 sm:mb-12 last:mb-0"
             >
               <div
-                className="relative p-6 sm:p-7 md:p-8 rounded-xl overflow-hidden"
+                className="relative p-7 sm:p-9 md:p-10 rounded-2xl overflow-hidden"
                 style={{
                   background: "rgba(255,255,255,0.025)",
                   backdropFilter: "blur(24px)",
@@ -1261,8 +1267,8 @@ function AIBrainIntro() {
                       {phase.title}
                     </h3>
                     <p
-                      className="text-xs sm:text-sm font-light leading-relaxed"
-                      style={{ color: "var(--color-text-secondary)" }}
+                      className="text-sm sm:text-base font-light leading-[1.9]"
+                      style={{ color: "rgba(240,248,252,0.78)" }}
                     >
                       {phase.desc}
                     </p>
@@ -2157,7 +2163,10 @@ function PortalView({ portalId, onBack }: { portalId: string; onBack: () => void
       style={{
         background:
           "radial-gradient(ellipse at 50% 12%, rgba(202,229,243,0.30) 0%, rgba(119,169,198,0.16) 34%, transparent 62%), linear-gradient(180deg, #789fb7 0%, #365c74 42%, #10283a 72%, #07131e 100%)",
-      }}
+        "--color-text": "#ffffff",
+        "--color-text-secondary": "rgba(240,248,252,0.82)",
+        "--color-text-muted": "rgba(228,242,250,0.64)",
+      } as React.CSSProperties}
     >
       <div className="fixed inset-0 pointer-events-none opacity-50"
         style={{ background: "radial-gradient(circle at 50% 45%, rgba(220,242,255,0.12), transparent 48%)" }}
@@ -2174,7 +2183,7 @@ function PortalView({ portalId, onBack }: { portalId: string; onBack: () => void
 
       {portalId === "brain" && (
         <>
-          <div className="pt-20"><AIBrainSection /></div>
+          <AIBrainSection />
           <BrainVisualization />
         </>
       )}
@@ -2198,7 +2207,7 @@ function PortalView({ portalId, onBack }: { portalId: string; onBack: () => void
 /* ── AI-Brain content bundle ── */
 function AIBrainSection() {
   return (
-    <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 pt-16">
+    <section className="relative z-10 min-h-screen flex flex-col items-center justify-start px-4 sm:px-6 pt-28 md:pt-24">
       <div className="text-center max-w-3xl mx-auto mb-8">
         <p className="text-[10px] sm:text-xs tracking-[0.15em] mb-4 font-light animate-breathe" style={{ color: "var(--color-text-muted)" }}>01 · Personal Intelligence System</p>
         <h2 className="text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tight leading-[1.0]" style={{ color: "var(--color-text)" }}>AI·BRAIN</h2>
@@ -2283,23 +2292,21 @@ function AIAssistantContent() {
 
 export default function AILabPage() {
   const [view, setView] = useState<"hub" | "brain" | "workflow" | "agents" | "toolchain">("hub");
-  const [transitionActive, setTransitionActive] = useState(false);
 
   const enterPortal = (id: string) => {
+    window.scrollTo(0, 0);
     setView(id as typeof view);
-    setTransitionActive(true);
-    setTimeout(() => setTransitionActive(false), 260);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   };
 
   const backToHub = () => {
+    window.scrollTo(0, 0);
     setView("hub");
-    setTransitionActive(true);
-    setTimeout(() => setTransitionActive(false), 260);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   };
 
   return (
     <>
-      <SpatialTransition active={transitionActive} onComplete={() => {}} />
       {view === "hub" ? (
         <HubView onEnterPortal={enterPortal} />
       ) : (

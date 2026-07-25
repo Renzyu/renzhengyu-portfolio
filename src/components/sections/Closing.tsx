@@ -142,10 +142,10 @@ export default function Closing() {
 
         {/* Collaboration and direct contact */}
         <div className="cc-contact flex flex-col items-center gap-3 font-light" style={{ fontFamily: "var(--font-inter)" }}>
-          <p className="text-sm md:text-base tracking-[0.12em]" style={{ color: "#999" }}>
+          <p className="text-lg md:text-2xl tracking-[0.1em]" style={{ color: "#d0d0d0" }}>
             期待与您合作。
           </p>
-          <div className="flex flex-col items-center gap-1.5 text-xs md:text-sm tracking-[0.08em]" style={{ color: "#777" }}>
+          <div className="flex flex-col items-center gap-2 text-base md:text-xl tracking-[0.06em]" style={{ color: "#aaa" }}>
             <a href="tel:18695233332" className="transition-colors duration-300 hover:text-white">
               186 9523 3332
             </a>

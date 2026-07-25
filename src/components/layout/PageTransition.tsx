@@ -140,95 +140,17 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
   /* ── Forward transition (home → /ai-lab) ── */
   const startAiOsTransition = useCallback(
     (el: HTMLElement, sourceType: TransitionSource) => {
-      if (activeRef.current) return;
-      activeRef.current = true;
-      navigationStartedRef.current = false;
-      sceneReadyRef.current = false;
-      setSceneReadyState(false);
-      setIsTransitioning(true);
-      setTransitionSource(sourceType);
+      void el;
+      void sourceType;
       saveScrollY();
-
-      const rect = el.getBoundingClientRect();
-      const clone = cloneRef.current;
-      const overlay = overlayRef.current;
-      if (!clone || !overlay) { router.push("/ai-lab"); return; }
-
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-
-      gsap.set(clone, {
-        opacity: 1, x: rect.left, y: rect.top,
-        width: rect.width, height: rect.height,
-        fontSize: window.getComputedStyle(el).fontSize,
-        color: window.getComputedStyle(el).color,
-      });
-
-      const navigate = () => {
-        if (navigationStartedRef.current) return;
-        navigationStartedRef.current = true;
-        router.push("/ai-lab");
-      };
-
-      // Start route resolution on the click frame. The shared-element motion
-      // now masks loading instead of delaying navigation until it finishes.
-      navigate();
-
-      gsap.timeline()
-        .to(clone, {
-          x: vw / 2 - 120, y: vh / 2 - 20, width: 240, height: 40,
-          fontSize: "clamp(28px,5vw,42px)", duration: 0.24, ease: "power3.inOut",
-        }, 0)
-        .to(overlay, {
-          opacity: 1,
-          duration: 0.14,
-          ease: "power2.inOut",
-        }, 0);
+      router.push("/ai-lab");
     },
     [router, saveScrollY],
   );
 
   /* ── Reverse transition (/ai-lab → home) ── */
   const goBackWithTransition = useCallback(() => {
-    if (activeRef.current) return;
-    activeRef.current = true;
-    setIsTransitioning(true);
-
-    const clone = cloneRef.current;
-    const overlay = overlayRef.current;
-    if (!overlay) { router.back(); return; }
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    // Show clone at its current /ai-lab position (center-ish)
-    gsap.set(clone, {
-      opacity: 1, x: vw / 2 - 120, y: vh / 2 - 20,
-      width: 240, height: 40,
-      fontSize: "clamp(28px,5vw,42px)",
-      color: "rgba(245,251,255,0.9)",
-    });
-
-    // Overlay fades in, clone moves to a small position (simulating back to source)
-    gsap.timeline({
-      onComplete: () => {
-        router.back();
-        // Reset after route changes
-        setTimeout(() => {
-          activeRef.current = false;
-          setIsTransitioning(false);
-        }, 300);
-      },
-    })
-      .to(overlay, { opacity: 0.8, duration: 0.3, ease: "power2.inOut" }, 0)
-      .to(clone, {
-        x: vw / 2 - 60, y: vh + 20,
-        width: 160, height: 28,
-        fontSize: "16px",
-        opacity: 0,
-        duration: 0.5,
-        ease: "power3.inOut",
-      }, 0.15);
+    router.back();
   }, [router]);
 
   return (
