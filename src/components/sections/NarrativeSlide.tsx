@@ -87,13 +87,13 @@ export default function NarrativeSlide({
       {/* Full-screen image */}
       <Link
         href={`/case-study/${project.id}`}
-        className="absolute inset-0 block"
+        className="absolute inset-x-0 top-0 h-[70svh] md:inset-0 md:h-auto block"
       >
         <Image
           src={currentSrc}
           alt={project.title}
           fill
-          className="object-cover"
+          className="object-contain md:object-cover"
           sizes="100vw"
         />
       </Link>

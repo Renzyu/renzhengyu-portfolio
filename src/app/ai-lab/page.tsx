@@ -1714,6 +1714,82 @@ function SpaceProjectNodes({ scrollProgress, stageProgress, hoveredChapter, onHo
 }
 
 /* ── AI-OS Back Button ── */
+function MobileHubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
+  const portalByChapter: Record<string, string> = {
+    "understanding-ai-agents": "agents",
+    "ai-brain": "brain",
+    "built-with-ai": "workflow",
+    "future-of-agents": "toolchain",
+  };
+
+  return (
+    <div
+      className="relative min-h-[100svh] overflow-x-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 12%, rgba(202,229,243,0.34) 0%, rgba(119,169,198,0.18) 34%, transparent 62%), linear-gradient(180deg, #789fb7 0%, #365c74 42%, #10283a 72%, #07131e 100%)",
+      }}
+    >
+      <AiOsBackButton />
+
+      <section className="relative h-[82svh] min-h-[620px] overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ transform: "scale(0.64)", transformOrigin: "50% 44%" }}
+        >
+          <AISpace scrollProgress={0} hoveredChapter={null} stageProgress={0} />
+        </div>
+
+        <div className="absolute inset-x-6 bottom-14 z-20 text-center">
+          <p className="text-[10px] font-light leading-relaxed tracking-[0.16em]" style={{ color: "rgba(242,250,255,0.58)" }}>
+            AN EVOLVING CREATIVE OPERATING SYSTEM BUILT WITH AI
+          </p>
+          <div className="mx-auto mt-5 h-px w-12" style={{ background: "linear-gradient(90deg, transparent, rgba(235,248,255,0.65), transparent)" }} />
+          <p className="mt-3 text-[9px] tracking-[0.2em]" style={{ color: "rgba(235,248,255,0.38)" }}>
+            EXPLORE THE SYSTEM
+          </p>
+        </div>
+      </section>
+
+      <section className="relative z-20 px-4 pb-24">
+        <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+          {CHAPTER_NODES.map((node) => (
+            <button
+              key={node.id}
+              type="button"
+              onClick={() => onEnterPortal(portalByChapter[node.id])}
+              className="w-full rounded-[22px] p-5 text-left"
+              style={{
+                minHeight: 148,
+                color: "rgba(245,251,255,0.94)",
+                background: "linear-gradient(135deg, rgba(236,248,255,0.20), rgba(157,197,220,0.11))",
+                border: "1px solid rgba(240,250,255,0.38)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.32), 0 18px 42px rgba(7,30,45,0.14)",
+                backdropFilter: "blur(18px)",
+                WebkitBackdropFilter: "blur(18px)",
+              }}
+            >
+              <span className="block text-[9px] font-light tracking-[0.2em]" style={{ color: "rgba(220,240,252,0.62)" }}>
+                {node.num} / {node.category}
+              </span>
+              <span className="mt-3 block text-xl font-light tracking-[0.04em]">{node.title}</span>
+              <span className="mt-1 block text-sm font-light tracking-[0.04em]" style={{ color: "rgba(236,247,255,0.78)" }}>
+                {node.subtitle}
+              </span>
+              <span className="mt-2 block text-xs font-light leading-relaxed" style={{ color: "rgba(225,241,250,0.62)" }}>
+                {node.desc}
+              </span>
+              <span className="mt-4 block text-[9px] tracking-[0.18em]" style={{ color: "rgba(225,242,255,0.55)" }}>
+                ENTER →
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function AiOsBackButton({ visible = true }: { visible?: boolean }) {
   const { goBackWithTransition } = usePageTransition();
   const [show, setShow] = useState(false);
@@ -1762,6 +1838,7 @@ function AiOsBackButton({ visible = true }: { visible?: boolean }) {
 import AISpace from "@/components/spatial/AISpace";
 
 function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
+  const [isMobile, setIsMobile] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const dotRef = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: -100, y: -100 });
@@ -1777,6 +1854,15 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
   const [projectsReady, setProjectsReady] = useState(false);
 
   useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     const onScroll = () => {
       const max = document.body.scrollHeight - window.innerHeight;
       const sp = Math.min(1, Math.max(0, window.scrollY / max));
@@ -1844,6 +1930,8 @@ function HubView({ onEnterPortal }: { onEnterPortal: (id: string) => void }) {
       clearTimeout(leaveTimer);
     };
   }, []);
+
+  if (isMobile) return <MobileHubView onEnterPortal={onEnterPortal} />;
 
   return (
     <div className="relative" style={{ height: "300vh" }}>

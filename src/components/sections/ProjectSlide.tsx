@@ -97,9 +97,10 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
     const number = numberRef.current;
 
     if (!section || !image || !overlay || !content || !number) return;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
     const ctx = gsap.context(() => {
-      gsap.set(image, { scale: 1.1, opacity: 0 });
+      gsap.set(image, { scale: isMobile ? 1 : 1.1, opacity: 0 });
       gsap.set(overlay, { opacity: 0 });
       gsap.set(number, { opacity: 0 });
 
@@ -134,7 +135,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
         },
         onLeave: () => {
           setIsVisible(false);
-          gsap.to(image, { scale: 1.05, opacity: 0.3, duration: 0.8, ease: "power2.in" });
+          gsap.to(image, { scale: isMobile ? 1 : 1.05, opacity: isMobile ? 1 : 0.3, duration: 0.8, ease: "power2.in" });
           gsap.to(overlay, { opacity: 0, duration: 0.6 });
           gsap.to(content, { opacity: 0, duration: 0.4 });
           gsap.to(number, { opacity: 0, duration: 0.4 });
@@ -149,7 +150,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
         },
         onEnterBack: () => {
           setIsVisible(true);
-          gsap.set(image, { scale: 1.1, opacity: 0 });
+          gsap.set(image, { scale: isMobile ? 1 : 1.1, opacity: 0 });
           gsap.to(image, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" });
           gsap.to(overlay, { opacity: 1, duration: 0.8 });
           gsap.to(number, { opacity: 1, duration: 0.6, delay: 0.2 });
@@ -166,7 +167,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
         },
         onLeaveBack: () => {
           setIsVisible(false);
-          gsap.to(image, { scale: 1.05, opacity: 0.3, duration: 0.8 });
+          gsap.to(image, { scale: isMobile ? 1 : 1.05, opacity: isMobile ? 1 : 0.3, duration: 0.8 });
           gsap.to(overlay, { opacity: 0, duration: 0.6 });
           gsap.to(content, { opacity: 0, duration: 0.4 });
           gsap.to(number, { opacity: 0, duration: 0.4 });
@@ -227,7 +228,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
     >
       {/* Interactive image area — full bleed */}
       <div
-        className="absolute inset-0 z-10"
+        className="absolute inset-x-0 top-0 h-[68svh] md:inset-0 md:h-auto z-10"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -238,14 +239,14 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
         <div
           ref={imageContainerRef}
           className="absolute inset-0"
-          style={{ willChange: "transform, opacity", transform: "scale(1.1)" }}
+          style={{ willChange: "transform, opacity" }}
         >
           <Image
             src={currentSrc}
             alt={project.title}
             fill
-            className="object-cover"
-            style={{ objectPosition: "center 25%" }}
+            className="object-contain md:object-cover"
+            style={{ objectPosition: "center center" }}
             loading={index > 2 ? "lazy" : undefined}
             sizes="100vw"
             priority={index <= 2}
@@ -287,7 +288,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
           onClick={prevImage}
           onMouseEnter={() => setArrowHovered("left")}
           onMouseLeave={() => setArrowHovered(null)}
-          className="absolute left-3 md:left-10 top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
+          className="absolute left-3 md:left-10 top-[34svh] md:top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
           style={{
             opacity: hovered ? 0.8 : 0.3,
             transform: `translateY(-50%) ${arrowHovered === "left" ? "translateX(-5px)" : "translateX(0)"}`,
@@ -307,7 +308,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
           onClick={nextImage}
           onMouseEnter={() => setArrowHovered("right")}
           onMouseLeave={() => setArrowHovered(null)}
-          className="absolute right-3 md:right-10 top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
+          className="absolute right-3 md:right-10 top-[34svh] md:top-1/2 z-20 p-3 cursor-pointer bg-transparent border-0 outline-0"
           style={{
             opacity: hovered ? 0.8 : 0.3,
             transform: `translateY(-50%) ${arrowHovered === "right" ? "translateX(5px)" : "translateX(0)"}`,
@@ -323,7 +324,7 @@ export default function ProjectSlide({ project, index }: ProjectSlideProps) {
 
       {/* Image counter — bottom right, film-strip counter */}
       {total > 1 && (
-        <div className="absolute bottom-6 md:bottom-12 right-5 md:right-12 z-20 pointer-events-none">
+        <div className="absolute bottom-[33svh] md:bottom-12 right-5 md:right-12 z-20 pointer-events-none">
           <span className="text-[11px] md:text-sm tracking-[0.12em] font-light text-white/50">
             {counter}
           </span>
